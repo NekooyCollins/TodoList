@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "title": "Prepare for exam",
+        "desc": "Rivers",
+        "type": "Study",
+        "duration": 60.000000,
+        "members": [1,2,3,4,5],
+        "isFinish": false
+    },
+    {
+        "id": 2,
+        "title": "Presentation",
+        "desc": "Rivers",
+        "type": "Study",
+        "duration": 60.000000,
+        "members": [1,2,3,4,5],
+        "isFinish": false
+    },
+    {
+        "id": 3,
+        "title": "Relax",
+        "desc": "Rivers",
+        "type": "Study",
+        "duration": 60.000000,
+        "members": [1,2,3,4,5],
+        "isFinish": false
+    },
+    {
+        "id": 4,
+        "title": "Turtle Rock",
+        "desc": "Rivers",
+        "type": "Study",
+        "duration": 60.000000,
+        "members": [1,2,3,4,5],
+        "isFinish": false
+    },
+    {
+        "id": 5,
+        "title": "Turtle Rock",
+        "desc": "Rivers",
+        "type": "Study",
+        "duration": 60.000000,
+        "members": [1,2,3,4,5],
+        "isFinish": false
+    }
+]
