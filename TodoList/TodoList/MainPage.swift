@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct MainPageView: View {
-    init() {
+    var user: UserDataStructure
+    init(inputuser: UserDataStructure) {
         UITableView.appearance().backgroundColor = .clear
+        user = inputuser
     }
-    
     @EnvironmentObject private var taskData: TaskData
     @EnvironmentObject private var userData: UserData
     
@@ -32,7 +33,7 @@ struct MainPageView: View {
                 VStack{
                     List{
                         ForEach(0..<4, id: \.self) { idx in
-                            NavigationLink(destination: TaskDetail(task: taskData.dataset[idx])) {
+                            NavigationLink(destination: TaskDetail(user: user, task: taskData.dataset[idx])) {
                                     TaskRow(task: taskData.dataset[idx])
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -49,13 +50,13 @@ struct MainPageView: View {
                 VStack (alignment: .leading){
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     HStack{
-                        NavigationLink(destination: AddTask()) {
+                        NavigationLink(destination: AddTask(currentUser: user)) {
                            Text("New Task")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
                         .buttonStyle(PlainButtonStyle())
                         Spacer()
-                        NavigationLink(destination: TaskList()) {
+                        NavigationLink(destination: TaskList(user: user)) {
                            Text("View All")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -68,7 +69,7 @@ struct MainPageView: View {
                         .font(.title2)
                     HStack{
                         Spacer()
-                        NavigationLink(destination: TaskList()) {
+                        NavigationLink(destination: TaskList(user: user)) {
                            Text("See Ranking")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -88,7 +89,7 @@ struct MainPageView: View {
 
 struct MainPageView_Previews: PreviewProvider {
     static var previews: some View {
-        MainPageView()
+        MainPageView(inputuser: userDataSet[0])
             .environmentObject(TaskData())
             .environmentObject(UserData())
     }

@@ -11,7 +11,7 @@ import SwiftUI
 struct TodoListApp: App {
     var body: some Scene {
         WindowGroup {
-            MainPageView()
+            MainPageView(inputuser: userDataSet[0])
                 .environmentObject(TaskData())
                 .environmentObject(UserData())
         }
