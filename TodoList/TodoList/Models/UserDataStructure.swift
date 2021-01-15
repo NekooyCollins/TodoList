@@ -15,4 +15,5 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
     var email: String
     var passwd: String
 //   var friends: [Int]
+
 }
