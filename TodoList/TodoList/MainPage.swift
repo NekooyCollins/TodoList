@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct MainPageView: View {
+    init() {
+        UITableView.appearance().backgroundColor = .clear
+    }
+    
     @EnvironmentObject private var taskData: TaskData
     @EnvironmentObject private var userData: UserData
     
@@ -25,40 +29,27 @@ struct MainPageView: View {
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 }
                 
-
-//                List{
-//                    ForEach(0..<4, id: \.self) { idx in
-//                        NavigationLink(destination: TaskDetail(task: taskData.dataset[idx])) {
-//                                TaskRow(task: taskData.dataset[idx])
-//                        }
-//                        .buttonStyle(PlainButtonStyle())
-//                    }
-//                }
-//                .navigationBarTitle("Tasks")
-//                .listRowInsets(EdgeInsets())
-//                .navigationBarHidden(true)
-//                .frame(height: 200)
-//
-                
                 VStack{
-                    ForEach(0..<4, id: \.self) { idx in
-                        HStack{
-                            Text(taskData.dataset[idx].title)
-                                .lineLimit(0)
-                                .padding(.top, 1.0)
+                    List{
+                        ForEach(0..<4, id: \.self) { idx in
+                            NavigationLink(destination: TaskDetail(task: taskData.dataset[idx])) {
+                                    TaskRow(task: taskData.dataset[idx])
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        Spacer().frame(height: 5)
                     }
+                    .padding(.all, -40.0)
+                    .navigationBarTitle("Tasks")
+                    .listRowInsets(EdgeInsets())
+                    .navigationBarHidden(true)
+                    .frame(height: 180)
                 }
-                .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealWidth: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, minHeight: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealHeight: 40, maxHeight: 120, alignment: .center)
-                .background(/*@START_MENU_TOKEN@*//*@PLACEHOLDER=View@*/Color(hue: 1.0, saturation: 0.0, brightness: 0.97)/*@END_MENU_TOKEN@*/)
-                .border(/*@START_MENU_TOKEN@*/Color.gray/*@END_MENU_TOKEN@*/, width: 0.3)
-                .cornerRadius(4.0)
+                .padding(5.0)
                 
                 VStack (alignment: .leading){
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     HStack{
-                        NavigationLink(destination: TaskList()) {
+                        NavigationLink(destination: AddTask()) {
                            Text("New Task")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }

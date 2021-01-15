@@ -15,5 +15,5 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
     var email: String
     var passwd: String
     var totalFocusTime: Int
-//    var friends: [Int]
+//  var friends: [Int]
 }
