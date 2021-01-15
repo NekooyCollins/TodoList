@@ -56,3 +56,43 @@ func getShortMemName(memID: Int, userList: [UserDataStructure]) -> String {
     
     return ret
 }
+
+func timeFormat(originalTime: Int) -> String{
+    let hours = originalTime / 3600
+    let minutes = originalTime % 3600 / 60
+    let seconds = originalTime % 60
+    var result: String
+    
+    result = String(hours) + "h" + String(minutes) + "m" + String(seconds) + "s"
+    
+    return result
+}
+
+// email validation
+func isValidEmail(_ email: String) -> Bool {
+    let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+
+    let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+    return emailPred.evaluate(with: email)
+}
+
+func getUserEmail(memID: Int, userList: [UserDataStructure]) -> String {
+    var email: String = ""
+    for user in userList{
+        if user.id == memID {
+            email  = user.email
+        }
+    }
+    return email
+}
+
+func getUserFullName(memID: Int, userList: [UserDataStructure]) -> String {
+    var fullName: String = ""
+    
+    for user in userList{
+        if user.id == memID {
+           fullName  = user.name
+        }
+    }
+    return fullName
+}
