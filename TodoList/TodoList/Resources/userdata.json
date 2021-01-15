@@ -3,30 +3,35 @@
         "id": 1,
         "name": "Alice Klark",
         "email": "alice@123.com",
-        "passwd": "test"
+        "passwd": "test",
+        "totalFocusTime": 200
     },
     {
         "id": 2,
         "name": "Bob Json",
         "email": "bob@123.com",
-        "passwd": "test"
+        "passwd": "test",
+        "totalFocusTime": 500
     },
     {
         "id": 3,
         "name": "Clie Bourn",
         "email": "clie@123.com",
-        "passwd": "test"
+        "passwd": "test",
+        "totalFocusTime": 600
     },
     {
         "id": 4,
         "name": "David Jobs",
         "email": "david@123.com",
-        "passwd": "test"
+        "passwd": "test",
+        "totalFocusTime": 300
     },
     {
         "id": 5,
         "name": "Elon Mask",
         "email": "elon@123.com",
-        "passwd": "test"
+        "passwd": "test",
+        "totalFocusTime": 100
     }
 ]
