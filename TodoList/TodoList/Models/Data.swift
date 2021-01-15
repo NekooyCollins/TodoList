@@ -11,7 +11,7 @@ import SwiftUI
 import CoreLocation
 
 let taskDataSet: [TaskDataStructure] = load("taskdata.json")
-let userDataSet: [UserDataStructure]  = load("userdata.json")
+let userDataSet: [UserDataStructure] = load("userdata.json")
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
@@ -33,6 +33,18 @@ func load<T: Decodable>(_ filename: String) -> T {
     } catch {
         fatalError("Couldn't parse \(filename) as \(T.self):\n\(error)")
     }
+}
+
+func getMemName(memID: Int, userList: [UserDataStructure]) -> String {
+    var fullName: String = ""
+
+    for user in userList{
+        if user.id == memID {
+            fullName = user.name
+        }
+    }
+
+    return fullName
 }
 
 func getShortMemName(memID: Int, userList: [UserDataStructure]) -> String {

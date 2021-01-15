@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TaskDetail: View {
+    var user: UserDataStructure
     var task: TaskDataStructure
     
     var body: some View {
@@ -23,8 +24,8 @@ struct TaskDetail: View {
                     }
                     .frame(height: 130)
                     HStack{
-                        NavigationLink(destination: AllMemberList()) {
-                           Text("All members")
+                        NavigationLink(destination: AllMemberList(task: task).environmentObject(UserData())) {
+                           Text("See all members")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -120,7 +121,7 @@ struct TaskDetail: View {
 
 struct TaskDetail_Previews: PreviewProvider {
     static var previews: some View {
-        TaskDetail(task: taskDataSet[0])
+        TaskDetail(user:userDataSet[0], task: taskDataSet[0])
             .environmentObject(TaskData())
     }
 }

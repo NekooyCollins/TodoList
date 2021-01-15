@@ -17,4 +17,24 @@ struct TaskDataStructure : Hashable, Codable, Identifiable {
     var duration: TimeInterval
     var type: String
     var isFinish: Bool
+    
+    init(){
+        title = ""
+        id = getMaxTaskID(taskList: taskDataSet) + 1
+        desc = ""
+        members = []
+        duration = 0.00
+        type = ""
+        isFinish = false
+    }
+}
+
+func getMaxTaskID(taskList: [TaskDataStructure]) -> Int{
+    var ret: Int = 0
+    for task in taskList{
+        if ret < task.id{
+            ret = task.id
+        }
+    }
+    return ret
 }
