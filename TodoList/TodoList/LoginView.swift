@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State var email: String = ""
-    @State var password: String = ""
-    @State var showPwd = false
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var showPwd = false
+    @ObservedObject private var manager = RequestHandle()
+    
     var isCanLogin: Bool {
         email.count > 0 &&
         password.count > 0
@@ -68,9 +70,9 @@ struct LoginView: View {
             Spacer()
                 .frame(height: 15.0)
            
-            // login button
+            // login button action
             Button(action: {
-                print("login action")
+                self.manager.postLoginRequest(email:self.email, passwd:self.password)
             }) {
                 Text("Login")
                     .foregroundColor(.white)

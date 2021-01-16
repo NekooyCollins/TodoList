@@ -9,11 +9,16 @@ import SwiftUI
 
 @main
 struct TodoListApp: App {
+    @ObservedObject var manager = RequestHandle()
     var body: some Scene {
         WindowGroup {
-            MainPageView(inputuser: userDataSet[0])
-                .environmentObject(TaskData())
-                .environmentObject(UserData())
+            if self.manager.authenticated{
+                MainPageView(inputuser: userDataSet[0])
+                    .environmentObject(TaskData())
+                    .environmentObject(UserData())
+            }else{
+                LoginView()
+            }
         }
     }
 }
