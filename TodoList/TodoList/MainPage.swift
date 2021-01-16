@@ -9,12 +9,15 @@ import SwiftUI
 
 struct MainPageView: View {
     var user: UserDataStructure
+    @EnvironmentObject private var taskData: TaskData
+    @EnvironmentObject private var userData: UserData
+    @ObservedObject private var manager = RequestHandle()
+    
+    
     init(inputuser: UserDataStructure) {
         UITableView.appearance().backgroundColor = .clear
         user = inputuser
     }
-    @EnvironmentObject private var taskData: TaskData
-    @EnvironmentObject private var userData: UserData
     
     var body: some View {
         NavigationView {
@@ -31,13 +34,14 @@ struct MainPageView: View {
                 }
                 
                 VStack{
-                    List{
-                        ForEach(0..<4, id: \.self) { idx in
-                            NavigationLink(destination: TaskDetail(user: user, task: taskData.dataset[idx])) {
-                                    TaskRow(task: taskData.dataset[idx])
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
+                    List(manager.taskList.taskResults) { task in
+//                        ForEach(0..<4, id: \.self) {  in
+//                             TODO: judge if task has finished
+//                            NavigationLink(destination: TaskDetail(user: user, task: task)) {
+//                                    TaskRow(task: task)
+//                            }
+//                            .buttonStyle(PlainButtonStyle())
+//                        }
                     }
                     .padding(.all, -40.0)
                     .navigationBarTitle("Tasks")

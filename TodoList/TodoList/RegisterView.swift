@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct RegisterView: View {
-    @State var email: String = ""
-    @State var username: String = ""
-    @State var password: String = ""
-    @State var uFlag = false
-    @State var eFlag = false
-    @State var pFlag = false
+    @State private var email: String = ""
+    @State private var username: String = ""
+    @State private var password: String = ""
+    @State private var uFlag = false
+    @State private var eFlag = false
+    @State private var pFlag = false
+    @ObservedObject private var manager = RequestHandle()
 
     init(){
         UITableView.appearance().backgroundColor = .clear
@@ -68,7 +69,7 @@ struct RegisterView: View {
 
             if (self.uFlag) && (self.pFlag) && (self.eFlag) {
                 Button(action: {
-                    print("register action")
+                    self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
                 }) {
                     Text("Sign Up")
                         .fontWeight(.bold)

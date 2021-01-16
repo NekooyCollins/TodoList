@@ -11,10 +11,10 @@ struct UserDetailView: View {
 //    var personalInfo: UserDataStructure
     @EnvironmentObject private var userList: UserData
     
-    @State var email: String = ""
-    @State var username: String = ""
-    @State var uFlag = false
-    @State var eFlag = false
+    @State private var email: String = ""
+    @State private var username: String = ""
+    @State private var uFlag = false
+    @State private var eFlag = false
     
     var body: some View {
         
