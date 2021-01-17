@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct AllMemberList: View {
-    var task: TaskDataStructure
-    @EnvironmentObject private var userList: UserData
+//    var inputTask: TaskDataStructure
+    @ObservedObject private var manager = RequestHandle()
+    
+    init(inputTask: TaskDataStructure){
+        self.manager.getTaskMember(taskid: String(inputTask.id))
+    }
     
     var body: some View {
         VStack (alignment: .leading){
@@ -21,11 +25,10 @@ struct AllMemberList: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            
+
             List{
-                ForEach(task.members, id: \.self) { memID in
-                        MemberRow(memID: memID)
-                            .environmentObject(UserData())
+                ForEach(manager.taskMemberList, id: \.self) { mem in
+                    MemberRow(user: mem)
                 }
             }
         }
@@ -35,7 +38,6 @@ struct AllMemberList: View {
 
 struct AllMemberList_Previews: PreviewProvider {
     static var previews: some View {
-        AllMemberList(task: taskDataSet[0])
-            .environmentObject(UserData())
+        AllMemberList(inputTask: localTestTask)
     }
 }

@@ -12,29 +12,21 @@ import CoreLocation
 struct TaskDataStructure : Hashable, Codable, Identifiable {
     var id : Int
     var title: String
-    var desc: String
-    var members: [Int]
-    var duration: TimeInterval
-    var type: String
-    var isFinish: Bool
+    var descption: String
+    var duration: Int
+    var remaintime: Int
+    var typestr: String
+    var isfinish: Bool
+    var isgrouptask: Bool
     
     init(){
         title = ""
-        id = getMaxTaskID(taskList: taskDataSet) + 1
-        desc = ""
-        members = []
-        duration = 0.00
-        type = ""
-        isFinish = false
+        id = 0
+        descption = ""
+        duration = 60
+        remaintime = 60
+        typestr = ""
+        isfinish = false
+        isgrouptask = false
     }
-}
-
-func getMaxTaskID(taskList: [TaskDataStructure]) -> Int{
-    var ret: Int = 0
-    for task in taskList{
-        if ret < task.id{
-            ret = task.id
-        }
-    }
-    return ret
 }

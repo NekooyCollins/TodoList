@@ -8,10 +8,10 @@
 import Foundation
 import Combine
 
-struct UserList: Decodable {
-    var userResults: [UserDataStructure]
-}
-
-struct AllTaskList: Decodable{
-    var taskResults: [TaskDataStructure]
-}
+//struct UserList: Decodable {
+//    var userSet: [UserDataStructure]
+//}
+//
+//struct AllTaskList: Decodable{
+//    var taskSet: [TaskDataStructure]
+//}

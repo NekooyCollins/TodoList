@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct MemberRow: View {
-    var memID: Int
-    @EnvironmentObject private var userList: UserData
+    var user: UserDataStructure
     
     var body: some View {
         HStack{
-            Text(getMemName(memID: memID, userList: userList.dataset))
+            Text(user.name)
                 .foregroundColor(.black)
         }
     }
@@ -21,7 +20,6 @@ struct MemberRow: View {
 
 struct MemberRow_Previews: PreviewProvider {
     static var previews: some View {
-        MemberRow(memID: 0)
-            .environmentObject(UserData())
+        MemberRow(user: localUserData)
     }
 }

@@ -8,15 +8,12 @@
 import SwiftUI
 
 struct MainPageView: View {
-    var user: UserDataStructure
-    @EnvironmentObject private var taskData: TaskData
-    @EnvironmentObject private var userData: UserData
     @ObservedObject private var manager = RequestHandle()
     
-    
-    init(inputuser: UserDataStructure) {
+    init() {
         UITableView.appearance().backgroundColor = .clear
-        user = inputuser
+        manager.getUserData()
+        manager.getTaskList()
     }
     
     var body: some View {
@@ -34,14 +31,14 @@ struct MainPageView: View {
                 }
                 
                 VStack{
-                    List(manager.taskList.taskResults) { task in
-//                        ForEach(0..<4, id: \.self) {  in
-//                             TODO: judge if task has finished
-//                            NavigationLink(destination: TaskDetail(user: user, task: task)) {
-//                                    TaskRow(task: task)
-//                            }
-//                            .buttonStyle(PlainButtonStyle())
-//                        }
+                    List{
+                        let max = manager.taskList.count > 4 ? 4 : manager.taskList.count
+                        ForEach(0..<max, id: \.self) { idx in
+                            NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
+                                TaskRow(task: manager.taskList[idx])
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
                     }
                     .padding(.all, -40.0)
                     .navigationBarTitle("Tasks")
@@ -54,13 +51,13 @@ struct MainPageView: View {
                 VStack (alignment: .leading){
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     HStack{
-                        NavigationLink(destination: AddTask(currentUser: user)) {
+                        NavigationLink(destination: AddTask()) {
                            Text("New Task")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
                         .buttonStyle(PlainButtonStyle())
                         Spacer()
-                        NavigationLink(destination: TaskList(user: user)) {
+                        NavigationLink(destination: TaskList()) {
                            Text("View All")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -68,12 +65,12 @@ struct MainPageView: View {
                     }
                     
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                    Text("Statistics")
-                        .bold()
-                        .font(.title2)
+//                    Text("Statistics")
+//                        .bold()
+//                        .font(.title2)
                     HStack{
                         Spacer()
-                        NavigationLink(destination: TaskList(user: user)) {
+                        NavigationLink(destination: RankingListView()) {
                            Text("See Ranking")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -88,13 +85,13 @@ struct MainPageView: View {
             .padding(.top)
         }
         .frame(width: .infinity, height: .infinity, alignment: .topLeading)
+        .navigationBarTitle(Text("Main page"))
+        .navigationBarHidden(true)
     }
 }
 
 struct MainPageView_Previews: PreviewProvider {
     static var previews: some View {
-        MainPageView(inputuser: userDataSet[0])
-            .environmentObject(TaskData())
-            .environmentObject(UserData())
+        MainPageView()
     }
 }
