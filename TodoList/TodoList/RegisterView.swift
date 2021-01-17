@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct RegisterView: View {
+    @ObservedObject private var manager = RequestHandle()
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var uFlag = false
     @State private var eFlag = false
     @State private var pFlag = false
-    @ObservedObject private var manager = RequestHandle()
+    @State private var isLegal = false
 
     init(){
         UITableView.appearance().backgroundColor = .clear
@@ -67,18 +68,38 @@ struct RegisterView: View {
 //            .frame(height: 200.0)
             .background(Color.orange)
 
-            if (self.uFlag) && (self.pFlag) && (self.eFlag) {
-                Button(action: {
-                    self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
-                }) {
-                    Text("Sign Up")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+            NavigationLink(
+                destination: LoginView(),
+                isActive: $isLegal
+                ){
+                if (self.uFlag) && (self.pFlag) && (self.eFlag) {
+                    Button(action: {
+                        self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
+                        if self.manager.legalregister == true{
+                            isLegal = true
+                        }
+                    }) {
+                        Text("Sign Up")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 300, height: 45, alignment: .center)
+                    .background(Color.green)
+                    .cornerRadius(20)
                 }
-                .frame(width: 300, height: 45, alignment: .center)
-                .background(Color.green)
-                .cornerRadius(20)
             }
+//            if (self.uFlag) && (self.pFlag) && (self.eFlag) {
+//                Button(action: {
+//                    self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
+//                }) {
+//                    Text("Sign Up")
+//                        .fontWeight(.bold)
+//                        .foregroundColor(.white)
+//                }
+//                .frame(width: 300, height: 45, alignment: .center)
+//                .background(Color.green)
+//                .cornerRadius(20)
+//            }
             Spacer()
         }
         .padding(.top, 80.0)

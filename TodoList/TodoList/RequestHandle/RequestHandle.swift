@@ -10,12 +10,14 @@ import Combine
 
 class RequestHandle: ObservableObject{
     @Published var authenticated = false
-    @Published var userInfo = UserDataStructure(id: 0, name: "", email: "", passwd: "", totalFocusTime: 0)
-    @Published var taskList = AllTaskList(taskResults: [])
-    @Published var taskMemberList = UserList(userResults: [])
+    @Published var legalregister = false
+    @Published var currentUserEmail: String = ""
+    @Published var userInfo = UserDataStructure()
+    @Published var taskList: [TaskDataStructure] = []
+    @Published var taskMemberList: [UserDataStructure] = []
 
     func postLoginRequest(email: String, passwd: String) {
-        guard let url = URL(string: "http://127.0.0.1/login") else { return }
+        guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
         let body: [String: String] = ["email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -30,6 +32,9 @@ class RequestHandle: ObservableObject{
                 if httpResponse.statusCode == 200{
                     DispatchQueue.main.async {
                         self.authenticated = true
+                        self.currentUserEmail = email
+                        localUserData.email = email
+                        localAuth = true
                     }
                 }
             }
@@ -37,8 +42,8 @@ class RequestHandle: ObservableObject{
     }
     
     func postRegisterRequest(username: String, email: String, passwd: String){
-        guard let url = URL(string: "http://127.0.0.1/login") else { return }
-        let body: [String: String] = ["username": username, "email": email, "passwd": passwd]
+        guard let url = URL(string: "http://127.0.0.1:8080/register") else { return }
+        let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         
         var request = URLRequest(url: url)
@@ -52,22 +57,21 @@ class RequestHandle: ObservableObject{
                 print(httpResponse.statusCode)
                 if httpResponse.statusCode == 200{
                     DispatchQueue.main.async {
-                        self.authenticated = true
+                        self.legalregister = true
                     }
                 }
             }
         }.resume()
     }
     
-    func getUserData(email: String){
-        let url = URL(string: "http://127.0.0.1/getuserdata")!
-        let body: [String: String] = ["email": email]
-        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+    func getUserData(){
+        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + localUserData.email
+        let url = URL(string: urlString)!
+        print("ask for:" + localUserData.email)
         
         var request = URLRequest(url: url)
         
         request.httpMethod = "GET"
-        request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -88,20 +92,19 @@ class RequestHandle: ObservableObject{
                 let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
                 DispatchQueue.main.async {
                     self.userInfo = resData
+                    // Store to local user data
+                    localUserData = resData
+                    print("User email get is:" + localUserData.email)
                 }
             }
         }.resume()
     }
     
-    func getTaskList(userid: String){
-        let url = URL(string: "http://127.0.0.1/gettasklist")!
-        let body: [String: String] = ["userid": userid]
-        let finalBody = try! JSONSerialization.data(withJSONObject: body)
-        
+    func getTaskList(){
+        let url = URL(string: "http://127.0.0.1:8080/gettasklist?email="+localUserData.email)!
         var request = URLRequest(url: url)
         
         request.httpMethod = "GET"
-        request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -118,7 +121,7 @@ class RequestHandle: ObservableObject{
                 return
             }
             do{
-                let resData = try! JSONDecoder().decode(AllTaskList.self, from: data)
+                let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
                 DispatchQueue.main.async {
                     self.taskList = resData
                 }
@@ -127,14 +130,11 @@ class RequestHandle: ObservableObject{
     }
     
     func getTaskMember(taskid: String){
-        let url = URL(string: "http://127.0.0.1/gettaskmember")!
-        let body: [String: String] = ["taskid": taskid]
-        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        let url = URL(string: "http://127.0.0.1:8080/gettaskmember?taskid="+taskid)!
         
         var request = URLRequest(url: url)
         
         request.httpMethod = "GET"
-        request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -151,7 +151,7 @@ class RequestHandle: ObservableObject{
                 return
             }
             do{
-                let resData = try! JSONDecoder().decode(UserList.self, from: data)
+                let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
                 DispatchQueue.main.async {
                     self.taskMemberList = resData
                 }

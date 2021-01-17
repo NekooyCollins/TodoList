@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TaskDetail: View {
-    var user: UserDataStructure
+    @ObservedObject private var manager = RequestHandle()
     var task: TaskDataStructure
     
     var body: some View {
@@ -19,12 +19,11 @@ struct TaskDetail: View {
                             Text("Members").font(.title).bold()
                             Spacer()
                         }
-                        MemberShortList(task: task)
-                            .environmentObject(UserData())
+                        MemberShortList(inputTask: task)
                     }
                     .frame(height: 130)
                     HStack{
-                        NavigationLink(destination: AllMemberList(task: task).environmentObject(UserData())) {
+                        NavigationLink(destination: AllMemberList(inputTask: task)) {
                            Text("See all members")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -45,7 +44,7 @@ struct TaskDetail: View {
                         VStack{
                             HStack{
                                 Spacer()
-                                Text(stringFromTimeInterval(time: task.duration))
+                                Text(String(task.duration))
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
@@ -66,7 +65,7 @@ struct TaskDetail: View {
                         VStack{
                             HStack{
                                 Spacer()
-                                Text(task.type)
+                                Text(task.typestr)
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
@@ -83,7 +82,7 @@ struct TaskDetail: View {
                         Text("Description").font(.title3)
                         VStack{
                             HStack{
-                                Text(task.desc)
+                                Text(task.descption)
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(.gray)
@@ -121,15 +120,14 @@ struct TaskDetail: View {
 
 struct TaskDetail_Previews: PreviewProvider {
     static var previews: some View {
-        TaskDetail(user:userDataSet[0], task: taskDataSet[0])
-            .environmentObject(TaskData())
+        TaskDetail(task: localTestTask)
     }
 }
 
-func stringFromTimeInterval(time: TimeInterval) -> String {
-    let hours = Int(time) / 3600
-    let minutes = Int(time) / 60 % 60
-    let seconds = Int(time) % 60
-    return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
-}
+//func stringFromTimeInterval(time: TimeInterval) -> String {
+//    let hours = Int(time) / 3600
+//    let minutes = Int(time) / 60 % 60
+//    let seconds = Int(time) % 60
+//    return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+//}
 

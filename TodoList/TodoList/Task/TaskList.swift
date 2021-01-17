@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct TaskList: View {
-    var user: UserDataStructure
-    @EnvironmentObject private var AllTaskData: TaskData
+    @ObservedObject private var manager = RequestHandle()
+    
+    init() {
+        manager.getUserData()
+        manager.getTaskList()
+    }
     
     var body: some View {
         VStack (alignment: .leading){
             HStack{
                 Spacer()
-                NavigationLink(destination: AddTask(currentUser: user)) {
+                NavigationLink(destination: AddTask()) {
                    Text("Add Task  ")
                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                 }
@@ -23,8 +27,8 @@ struct TaskList: View {
             }
             
             List{
-                ForEach(AllTaskData.dataset, id: \.self) { task in
-                    NavigationLink(destination: TaskDetail(user: user, task: task)) {
+                ForEach(manager.taskList, id: \.self) { task in
+                    NavigationLink(destination: TaskDetail(task: task)) {
                             TaskRow(task: task)
                     }
                 }
@@ -34,9 +38,9 @@ struct TaskList: View {
     }
 }
 
-struct TaskList_Previews: PreviewProvider {
-    static var previews: some View {
-        TaskList(user: userDataSet[0])
-            .environmentObject(TaskData())
-    }
-}
+//struct TaskList_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TaskList(user: userDataSet[0])
+//            .environmentObject(TaskData())
+//    }
+//}

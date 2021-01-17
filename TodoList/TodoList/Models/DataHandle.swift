@@ -10,8 +10,8 @@ import UIKit
 import SwiftUI
 import CoreLocation
 
-let taskDataSet: [TaskDataStructure] = load("taskdata.json")
-let userDataSet: [UserDataStructure] = load("userdata.json")
+//let taskDataSet: [TaskDataStructure] = load("taskdata.json")
+//let userDataSet: [UserDataStructure] = load("userdata.json")
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
@@ -47,15 +47,9 @@ func getMemName(memID: Int, userList: [UserDataStructure]) -> String {
     return fullName
 }
 
-func getShortMemName(memID: Int, userList: [UserDataStructure]) -> String {
-    var fullName: String = ""
+func getShortMemName(fullName: String) -> String {
     var ret: String = ""
     
-    for user in userList{
-        if user.id == memID {
-            fullName = user.name
-        }
-    }
     let fullNameArr = fullName.split(separator: " ")
     let firstName: String = String(fullNameArr[0])
     let lastName: String? = fullNameArr.count > 1 ? String(fullNameArr[1]) : nil
@@ -69,6 +63,7 @@ func getShortMemName(memID: Int, userList: [UserDataStructure]) -> String {
     return ret
 }
 
+// Transform Int to time format
 func timeFormat(originalTime: Int) -> String{
     let hours = originalTime / 3600
     let minutes = originalTime % 3600 / 60
