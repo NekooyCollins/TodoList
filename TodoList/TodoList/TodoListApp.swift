@@ -11,11 +11,7 @@ import SwiftUI
 struct TodoListApp: App {
     var body: some Scene {
         WindowGroup {
-            if localAuth{
-                MainPageView()
-            }else{
-                LoginView()
-            }
+            MainPageView()
         }
     }
 }
