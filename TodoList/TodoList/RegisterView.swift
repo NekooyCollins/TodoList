@@ -16,6 +16,11 @@ struct RegisterView: View {
     @State private var eFlag = false
     @State private var pFlag = false
     @State private var isLegal = false
+    
+    var isCanRegister: Bool {
+        username.count >= 4 &&
+        password.count >= 6
+    }
 
     init(){
         UITableView.appearance().backgroundColor = .clear
@@ -39,40 +44,41 @@ struct RegisterView: View {
             Form {
                 // email Hstack
                 TextField("email", text: $email)
-                    .modifier(Validation(value: email) { name in
-                                            self.eFlag = isValidEmail(name)
-                                            return self.eFlag
-                                        })
+                    .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+//                    .modifier(Validation(value: email) { name in
+//                                            self.eFlag = isValidEmail(name)
+//                                            return self.eFlag
+//                                        })
                     .prefixedWithIcon(named: "envelope.fill")
                 
                 // username Hstack
                 Section(footer: Text("  username should be no less than 4 letters")){
                     TextField("username", text: $username)
-                        .modifier(Validation(value: username) { name in
-                                                self.uFlag = (name.count >= 4)
-                                                return self.uFlag
-                                            })
+                        .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+//                        .modifier(Validation(value: username) { name in
+//                                                self.uFlag = (name.count >= 4)
+//                                                return self.uFlag
+//                                            })
                         .prefixedWithIcon(named: "person.fill")
                 }
                 
                 // password HStack
                 Section(footer: Text("  password should no less than 6 digits")){
                     SecureField("password", text: $password, onCommit: {})
-                        .modifier(Validation(value: password) { pwd in
-                                                self.pFlag = (pwd.count >= 6)
-                                                return self.pFlag
-                                            })
+//                        .modifier(Validation(value: password) { pwd in
+//                                                self.pFlag = (pwd.count >= 6)
+//                                                return self.pFlag
+//                                            })
                         .prefixedWithIcon(named: "lock.fill")
                 }
             }
-//            .frame(height: 200.0)
             .background(Color.orange)
 
             NavigationLink(
                 destination: LoginView(),
                 isActive: $isLegal
                 ){
-                if (self.uFlag) && (self.pFlag) && (self.eFlag) {
+                if (isCanRegister) && (self.eFlag) {
                     Button(action: {
                         self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
                         if self.manager.legalregister == true{
@@ -88,18 +94,6 @@ struct RegisterView: View {
                     .cornerRadius(20)
                 }
             }
-//            if (self.uFlag) && (self.pFlag) && (self.eFlag) {
-//                Button(action: {
-//                    self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
-//                }) {
-//                    Text("Sign Up")
-//                        .fontWeight(.bold)
-//                        .foregroundColor(.white)
-//                }
-//                .frame(width: 300, height: 45, alignment: .center)
-//                .background(Color.green)
-//                .cornerRadius(20)
-//            }
             Spacer()
         }
         .padding(.top, 80.0)
@@ -127,18 +121,18 @@ extension View {
     }
 }
 
-struct Validation<Value>: ViewModifier {
-    var value: Value
-    var validator: (Value) -> Bool
-
-    func body(content: Content) -> some View {
-        Group {
-            if validator(value) {
-                content.border(Color.green)
-            } else {
-                content
-            }
-        }
-    }
-}
+//struct Validation<Value>: ViewModifier {
+//    var value: Value
+//    var validator: (Value) -> Bool
+//
+//    func body(content: Content) -> some View {
+//        Group {
+//            if validator(value) {
+//                content.border(Color.green)
+//            } else {
+//                content
+//            }
+//        }
+//    }
+//}
 
