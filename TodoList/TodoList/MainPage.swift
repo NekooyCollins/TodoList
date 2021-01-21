@@ -19,16 +19,22 @@ struct MainPageView: View {
     var body: some View {
         NavigationView {
             VStack (alignment: .leading){
-                VStack (alignment: .leading){
+                HStack{
                     Text("My TodoList")
                         .bold()
                         .font(.title)
-                    Spacer().frame(width: 100, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                    Text("Overview")
-                        .bold()
-                        .font(.title2)
-                    Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    Spacer()
+                    NavigationLink(destination: UserDetailView()){
+                        Image(systemName: "person.crop.circle")
+                            .resizable()
+                            .frame(width: 30.0, height: 30.0)
+                            .foregroundColor(Color.orange)
+                    }
                 }
+                Text("Overview")
+                    .bold()
+                    .font(.title2)
+                Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 
                 VStack{
                     List{
