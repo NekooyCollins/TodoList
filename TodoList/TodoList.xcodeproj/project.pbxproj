@@ -20,6 +20,8 @@
 		463EE474259D29A70050B519 /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463EE473259D29A70050B519 /* TaskRow.swift */; };
 		463EE479259D2C0E0050B519 /* TaskDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463EE478259D2C0E0050B519 /* TaskDetail.swift */; };
 		466A04A425B0A010009F5EA4 /* MemberRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466A04A325B0A010009F5EA4 /* MemberRow.swift */; };
+		4670833925B88C5B0057B700 /* AddTaskStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4670833825B88C5B0057B700 /* AddTaskStructure.swift */; };
+		4670833E25B8F4CD0057B700 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4670833D25B8F4CD0057B700 /* AlertView.swift */; };
 		467EA42C25AB650000E788D3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467EA42B25AB650000E788D3 /* ViewController.swift */; };
 		468CC0E725AA4DBC0064A11D /* MainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468CC0E625AA4DBC0064A11D /* MainPage.swift */; };
 		468CC0EF25AA55400064A11D /* ProcessTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468CC0EE25AA55400064A11D /* ProcessTask.swift */; };
@@ -79,6 +81,8 @@
 		463EE473259D29A70050B519 /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
 		463EE478259D2C0E0050B519 /* TaskDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetail.swift; sourceTree = "<group>"; };
 		466A04A325B0A010009F5EA4 /* MemberRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRow.swift; sourceTree = "<group>"; };
+		4670833825B88C5B0057B700 /* AddTaskStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskStructure.swift; sourceTree = "<group>"; };
+		4670833D25B8F4CD0057B700 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		467EA42B25AB650000E788D3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		468CC0E625AA4DBC0064A11D /* MainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPage.swift; sourceTree = "<group>"; };
 		468CC0EE25AA55400064A11D /* ProcessTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTask.swift; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 				7334DCD125B0AA66004D344A /* ChangePwdView.swift */,
 				7334DCD925B0EB71004D344A /* ChangeNameView.swift */,
 				467EA42B25AB650000E788D3 /* ViewController.swift */,
+				4670833D25B8F4CD0057B700 /* AlertView.swift */,
 				463EE428259D268E0050B519 /* Assets.xcassets */,
 				463EE42D259D268E0050B519 /* Info.plist */,
 				463EE42A259D268E0050B519 /* Preview Content */,
@@ -241,6 +246,7 @@
 				739A5FDF25B38F3300104F0B /* DataHandle.swift */,
 				739A5FE425B38F5A00104F0B /* UserDataStructure.swift */,
 				739A5FE925B38F8200104F0B /* TaskDataStructure.swift */,
+				4670833825B88C5B0057B700 /* AddTaskStructure.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -390,6 +396,7 @@
 				739A5FE525B38F5A00104F0B /* UserDataStructure.swift in Sources */,
 				73CC572125AB55FB00067B27 /* RegisterView.swift in Sources */,
 				7334DCD225B0AA66004D344A /* ChangePwdView.swift in Sources */,
+				4670833925B88C5B0057B700 /* AddTaskStructure.swift in Sources */,
 				46B5CE9325A6895F009A557B /* TaskList.swift in Sources */,
 				463EE479259D2C0E0050B519 /* TaskDetail.swift in Sources */,
 				4633A86F25AA6EB500E8B4D5 /* MemberShortList.swift in Sources */,
@@ -409,6 +416,7 @@
 				73CC573125AB56C800067B27 /* RankingRowView.swift in Sources */,
 				73CC571C25AB55C900067B27 /* LoginView.swift in Sources */,
 				463EE474259D29A70050B519 /* TaskRow.swift in Sources */,
+				4670833E25B8F4CD0057B700 /* AlertView.swift in Sources */,
 				73CC574425AB758700067B27 /* UserDetailView.swift in Sources */,
 				466A04A425B0A010009F5EA4 /* MemberRow.swift in Sources */,
 			);

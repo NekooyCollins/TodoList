@@ -20,8 +20,8 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
     //FIXME: 
     init(){
         id      = 0;
-        name    = "Anna"
-        email   = "Anna@apple.com"
-        passwd  = "1234567"
+        name    = "Jobs"
+        email   = "jobs@apple.com"
+        passwd  = "apple123"
     }
 }
