@@ -82,7 +82,7 @@ struct TaskDetail: View {
                         Text("Description").font(.title3)
                         VStack{
                             HStack{
-                                Text(task.descption)
+                                Text(task.description)
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(.gray)

@@ -1,16 +1,17 @@
 //
-//  TaskDataStructure.swift
-//  TodoList2
+//  AddTaskStructure.swift
+//  TodoList
 //
-//  Created by 陈子迪 on 2020/12/30.
+//  Created by 陈子迪 on 2021/1/20.
 //
 
 import Foundation
 import SwiftUI
 import CoreLocation
 
-struct TaskDataStructure : Hashable, Codable, Identifiable {
+struct AddTaskStructure : Hashable, Codable, Identifiable {
     var id : Int
+    var creatorid : Int
     var title: String
     var description: String
     var duration: Int
@@ -18,9 +19,11 @@ struct TaskDataStructure : Hashable, Codable, Identifiable {
     var typestr: String
     var isfinish: Bool
     var isgrouptask: Bool
+    var member: [UserDataStructure]
     
     init(){
         title = ""
+        creatorid = localUserData.id
         id = 0
         description = ""
         duration = 60
@@ -28,5 +31,6 @@ struct TaskDataStructure : Hashable, Codable, Identifiable {
         typestr = ""
         isfinish = false
         isgrouptask = false
+        member = []
     }
 }

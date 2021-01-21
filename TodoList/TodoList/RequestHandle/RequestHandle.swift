@@ -11,10 +11,13 @@ import Combine
 class RequestHandle: ObservableObject{
     @Published var authenticated = false
     @Published var legalregister = false
+    @Published var getUserByEmailFlag = false
     @Published var currentUserEmail: String = ""
     @Published var userInfo = UserDataStructure()
     @Published var taskList: [TaskDataStructure] = []
     @Published var taskMemberList: [UserDataStructure] = []
+    @Published var addTaskFlag = false
+
 
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
@@ -48,7 +51,7 @@ class RequestHandle: ObservableObject{
         
         var request = URLRequest(url: url)
         
-        request.httpMethod = "POST"
+        request.httpMethod = "`POST`"
         request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -95,6 +98,43 @@ class RequestHandle: ObservableObject{
                     // Store to local user data
                     localUserData = resData
                     print("User email get is:" + localUserData.email)
+                }
+            }
+        }.resume()
+    }
+    
+    func getUserDataByEmail(email: String){
+        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + email
+        let url = URL(string: urlString)!
+        print("ask for:" + localUserData.email)
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard error == nil else {
+                print("Error: error get user data")
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                return
+            }
+            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                return
+            }
+            do{
+                let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
+                DispatchQueue.main.async {
+                    self.userInfo = resData
+                    self.getUserByEmailFlag = true
+                    // Store to local user data
+//                    localUserData = resData
+//                    print("User email get is:" + localUserData.email)
                 }
             }
         }.resume()
@@ -154,6 +194,28 @@ class RequestHandle: ObservableObject{
                 let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
                 DispatchQueue.main.async {
                     self.taskMemberList = resData
+                }
+            }
+        }.resume()
+    }
+    
+    func postAddTask(addTask: AddTaskStructure) {
+        
+        guard let url = URL(string: "http://127.0.0.1:8080/addtask") else { return }
+        let finalBody: Data = try! JSONEncoder().encode(addTask)
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        self.addTaskFlag = true
+                    }
                 }
             }
         }.resume()
