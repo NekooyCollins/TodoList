@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 
 struct AddTask: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding var isDone: Bool
     @ObservedObject private var manager = RequestHandle()
     @State private var newTask = AddTaskStructure()
@@ -90,20 +91,19 @@ struct AddTask: View {
             }
             .padding()
 
-            // Try to add task.
-            VStack{
-                Button(action: {
-                    self.isDone = false
-                    newTask.duration = Int(inputDuration) ?? 0
-                    self.manager.postAddTask(addTask: newTask)
-                }) {
-                    Text("Done")
-                        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                }
-            }
             Spacer()
         }
         .navigationBarTitle("Add Task")
+        .navigationBarItems(trailing:
+            Button(action: {
+                self.isDone = false
+                newTask.duration = Int(inputDuration) ?? 0
+                self.manager.postAddTask(addTask: newTask)
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Done")
+                    .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+            })
     }
 }
 

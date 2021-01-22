@@ -29,11 +29,11 @@ struct TaskDetail: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         Spacer()
-                        NavigationLink(destination: AddMember()) {
-                           Text("Add member")
-                            .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+//                        NavigationLink(destination: AddMember()) {
+//                           Text("Add member")
+//                            .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+//                        }
+//                        .buttonStyle(PlainButtonStyle())
                     }
                     
                     HStack{

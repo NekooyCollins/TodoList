@@ -14,8 +14,6 @@ struct MainPageView: View {
     
     init() {
         UITableView.appearance().backgroundColor = .clear
-        manager.getUserData()
-        manager.getTaskList()
     }
     
     var body: some View {
@@ -96,6 +94,10 @@ struct MainPageView: View {
         .frame(width: .infinity, height: .infinity, alignment: .topLeading)
         .navigationBarTitle(Text("Main page"))
         .navigationBarHidden(true)
+        .onAppear(perform: {
+            manager.getUserData()
+            manager.getTaskList()
+        })
     }
 }
 
