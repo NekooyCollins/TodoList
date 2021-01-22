@@ -8,16 +8,12 @@
 import SwiftUI
 
 struct ShowFriends: View {
-//    @State var friend1 = UserDataStructure()
-//    @State var friend2 = UserDataStructure()
-//    var friendList: [UserDataStructure]
-    
-    
-//    @ObservedObject private var manager = RequestHandle()
-//
-//    init(inputTask: TaskDataStructure){
-//        self.manager.getTaskMember(taskid: String(inputTask.id))
-//    }
+    @ObservedObject private var friendManager = RequestHandle()
+    @State private var addFriend = false
+
+    init(){
+        friendManager.getFriendList(email: "Lisa@apple.com")
+    }
     
     var body: some View {
         VStack (alignment: .leading){
@@ -25,24 +21,37 @@ struct ShowFriends: View {
                 Text("My Friends")
                     .bold()
                     .font(.title)
-                Spacer()
-                Image(systemName: "person.crop.circle.fill.badge.plus")
-                    .resizable()
-                    .frame(width: 35.0, height: 30.0)
-                    .foregroundColor(Color.orange)
+                
+                Button(action: {
+                    addFriend = true
+                }) {
+                    Image(systemName: "person.crop.circle.fill.badge.plus")
+                        .resizable()
+                        .frame(width: 35.0, height: 30.0)
+                        .foregroundColor(Color.orange)
+                }.alert(isPresented: $addFriend,
+                        TextAlert(title: "Add a new friend",
+                                  message: "Enter email") { result in
+                         if let friendEmail = result {
+                            print("Search for " + friendEmail)
+                            friendManager.postAddFriend(myEmail:"Lisa@apple.com", friendEmail: friendEmail)
+                            friendManager.getFriendList(email: "Lisa@apple.com")
+                         }
+                 })
             }
+            .frame(height: 30.0)
             .padding(.horizontal)
+            
             List{
-//                ForEach(friendList, id: \.self) { mem in
+                ForEach(friendManager.friendList, id: \.self) { friend in
                     HStack{
-                        Text("Anna Hacker")
+                        Text(friend.name)
                             .foregroundColor(.orange)
                         Spacer()
-                        Text("anna@apple.com")
+                        Text(friend.email)
                             .foregroundColor(.gray)
                     }
-                    
-//                }// end of ForEach
+                }// end of ForEach
             }
         }
         .navigationBarTitle("Friends")

@@ -8,12 +8,6 @@
 import SwiftUI
 
 struct UserDetailView: View {
-//    var body: some View {
-//        Text("Hello world")
-//    }
-//    var personalInfo: UserDataStructure
-//    @EnvironmentObject private var userList: UserData
-//    @ObservedObject private var manager = RequestHandle()
 
     @State private var email: String = ""
     @State private var username: String = ""

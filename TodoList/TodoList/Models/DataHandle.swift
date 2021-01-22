@@ -65,13 +65,11 @@ func getShortMemName(fullName: String) -> String {
 
 // Transform Int to time format
 func timeFormat(originalTime: Int) -> String{
-    let hours = originalTime / 3600
-    let minutes = originalTime % 3600 / 60
-    let seconds = originalTime % 60
+    let hours = originalTime / 60
+    let minutes = originalTime % 60
     var result: String
     
-    result = String(hours) + "h" + String(minutes) + "m" + String(seconds) + "s"
-    
+    result = String(hours) + "h" + String(minutes) + "m"
     return result
 }
 

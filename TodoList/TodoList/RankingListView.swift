@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct RankingListView: View {
-//    @EnvironmentObject private var allUserData: UserData
-    @ObservedObject private var manager = RequestHandle()
+    @ObservedObject private var rankingManager = RequestHandle()
+    init(){
+        rankingManager.getRankList(userid: String(localUserData.id))
+    }
     
     var body: some View {
-//        NavigationView {
-//            List {
-//                ForEach(allUserData.dataset){ user in
-//                    RankingRowView()
-//                }
-//            }
-//            .navigationBarTitle(Text("Ranking"))
-//        }
-        Text("hello world")
+        VStack{
+            List {
+                ForEach(rankingManager.rankList, id: \.self){ item in
+                    RankingRowView(rankItem: item)
+                }
+            }
+        }
+        .navigationBarTitle(Text("Ranking"))
     }
 }
 

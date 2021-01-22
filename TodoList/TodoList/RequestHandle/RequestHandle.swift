@@ -16,8 +16,11 @@ class RequestHandle: ObservableObject{
     @Published var userInfo = UserDataStructure()
     @Published var taskList: [TaskDataStructure] = []
     @Published var taskMemberList: [UserDataStructure] = []
+    @Published var friendList: [UserDataStructure] = []
+    @Published var rankList: [RankStructure] = []
     @Published var addTaskFlag = false
-
+    @Published var addFriendFlag = false
+    
 
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
@@ -199,6 +202,80 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    func getFriendList(email:String){
+        let url = URL(string: "http://127.0.0.1:8080/getfriendlist?email="+email)!
+        var request = URLRequest(url: url)
+        var dataIsNull = false
+        
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                return
+            }
+            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                return
+            }
+            
+            do {
+                try JSONSerialization.jsonObject(with: data, options: [])
+            } catch {
+                dataIsNull = true
+                print("JSON error: \(error.localizedDescription)")
+            }
+            if(dataIsNull == false){
+                let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
+                DispatchQueue.main.async {
+                    self.friendList = resData
+                }
+            }
+        }.resume()
+    }
+    
+    func getRankList(userid: String){
+        let url = URL(string: "http://127.0.0.1:8080/getranklist?userid="+userid)!
+        var request = URLRequest(url: url)
+        var dataIsNull = false
+        
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                return
+            }
+            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                return
+            }
+            do {
+                try JSONSerialization.jsonObject(with: data, options: [])
+            } catch {
+                dataIsNull = true
+                print("JSON error: \(error.localizedDescription)")
+            }
+            if(dataIsNull == false){
+                let resData = try! JSONDecoder().decode([RankStructure].self, from: data)
+                DispatchQueue.main.async {
+                    self.rankList = resData
+                }
+            }
+        }.resume()
+    }
+    
+    
     func postAddTask(addTask: AddTaskStructure) {
         
         guard let url = URL(string: "http://127.0.0.1:8080/addtask") else { return }
@@ -220,5 +297,28 @@ class RequestHandle: ObservableObject{
             }
         }.resume()
     }
+    
+    func postAddFriend(myEmail: String, friendEmail: String) {
+        guard let url = URL(string: "http://127.0.0.1:8080/addfriend") else { return }
+        let body: [String: String] = ["myemail": myEmail, "friendemail": friendEmail]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        self.addFriendFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
 }
+
 

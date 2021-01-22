@@ -11,7 +11,9 @@ struct Countdown: View {
     @State private var showingAlert = false
     @State private var leave = false
     @State private var isActive = true
-    @State private var timeRemaining = 20
+    
+    // FIXME: timeRemaining(min)
+    @State private var timeRemaining = 20*60
     @State private var textContent = ""
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
