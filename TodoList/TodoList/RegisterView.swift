@@ -13,8 +13,8 @@ struct RegisterView: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var uFlag = false
-    @State private var eFlag = false
     @State private var pFlag = false
+    @State private var isEmailValid = true
     @State private var isLegal = false
     
     var isCanRegister: Bool {
@@ -43,32 +43,35 @@ struct RegisterView: View {
             // information form
             Form {
                 // email Hstack
-                TextField("email", text: $email)
-                    .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
-//                    .modifier(Validation(value: email) { name in
-//                                            self.eFlag = isValidEmail(name)
-//                                            return self.eFlag
-//                                        })
-                    .prefixedWithIcon(named: "envelope.fill")
+                TextField("email", text: $email, onEditingChanged: { (isChanged) in
+                    if !isChanged {
+                        if isValidEmail(email) {
+                            self.isEmailValid = true
+                        } else {
+                            self.isEmailValid = false
+                            self.email = ""
+                        }
+                    }
+                })
+                .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
+                .prefixedWithIcon(named: "envelope.fill")
+                
+                if !isEmailValid {
+                    Text("Email is Not Valid")
+                        .font(.callout)
+                        .foregroundColor(Color.red)
+                }
                 
                 // username Hstack
                 Section(footer: Text("  username should be no less than 4 letters")){
                     TextField("username", text: $username)
                         .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
-//                        .modifier(Validation(value: username) { name in
-//                                                self.uFlag = (name.count >= 4)
-//                                                return self.uFlag
-//                                            })
                         .prefixedWithIcon(named: "person.fill")
                 }
                 
                 // password HStack
                 Section(footer: Text("  password should no less than 6 digits")){
                     SecureField("password", text: $password, onCommit: {})
-//                        .modifier(Validation(value: password) { pwd in
-//                                                self.pFlag = (pwd.count >= 6)
-//                                                return self.pFlag
-//                                            })
                         .prefixedWithIcon(named: "lock.fill")
                 }
             }
@@ -78,7 +81,7 @@ struct RegisterView: View {
                 destination: LoginView(),
                 isActive: $isLegal
                 ){
-                if (isCanRegister) && (self.eFlag) {
+                if (isCanRegister) && (self.isEmailValid) {
                     Button(action: {
                         self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
                         if self.manager.legalregister == true{
