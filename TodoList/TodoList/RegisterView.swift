@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RegisterView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject private var manager = RequestHandle()
     @State private var email: String = ""
     @State private var username: String = ""
@@ -86,6 +87,7 @@ struct RegisterView: View {
                         self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
                         if self.manager.legalregister == true{
                             isLegal = true
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }) {
                         Text("Sign Up")

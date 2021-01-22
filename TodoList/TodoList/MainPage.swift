@@ -82,6 +82,10 @@ struct MainPageView: View {
 //                        .bold()
 //                        .font(.title2)
                     HStack{
+                        NavigationLink(destination: ShowFriends()) {
+                           Text("See Friends")
+                            .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+                        }
                         Spacer()
                         NavigationLink(destination: RankingListView()) {
                            Text("See Ranking")

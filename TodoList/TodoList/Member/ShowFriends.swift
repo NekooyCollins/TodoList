@@ -10,10 +10,6 @@ import SwiftUI
 struct ShowFriends: View {
     @ObservedObject private var friendManager = RequestHandle()
     @State private var addFriend = false
-
-    init(){
-        friendManager.getFriendList(email: "Lisa@apple.com")
-    }
     
     var body: some View {
         VStack (alignment: .leading){
@@ -34,8 +30,8 @@ struct ShowFriends: View {
                                   message: "Enter email") { result in
                          if let friendEmail = result {
                             print("Search for " + friendEmail)
-                            friendManager.postAddFriend(myEmail:"Lisa@apple.com", friendEmail: friendEmail)
-                            friendManager.getFriendList(email: "Lisa@apple.com")
+                            friendManager.postAddFriend(myEmail:localUserData.email, friendEmail: friendEmail)
+                            friendManager.getFriendList(email: localUserData.email)
                          }
                  })
             }
@@ -53,8 +49,15 @@ struct ShowFriends: View {
                     }
                 }// end of ForEach
             }
+            .onAppear(perform: {
+                friendManager.getFriendList(email: localUserData.email)
+            })
         }
         .navigationBarTitle("Friends")
+        .navigationBarHidden(true)
+        .onAppear(perform: {
+            friendManager.getFriendList(email: localUserData.email)
+        })
     }
 }
 

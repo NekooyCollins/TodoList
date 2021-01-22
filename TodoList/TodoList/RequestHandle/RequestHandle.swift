@@ -20,7 +20,6 @@ class RequestHandle: ObservableObject{
     @Published var taskMemberList: [UserDataStructure] = []
     @Published var friendList: [UserDataStructure] = []
     @Published var rankList: [RankStructure] = []
-    @Published var addTaskFlag = false
     @Published var addFriendFlag = false
 
     func postLoginRequest(email: String, passwd: String) {
@@ -55,7 +54,7 @@ class RequestHandle: ObservableObject{
         
         var request = URLRequest(url: url)
         
-        request.httpMethod = "`POST`"
+        request.httpMethod = "POST"
         request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
