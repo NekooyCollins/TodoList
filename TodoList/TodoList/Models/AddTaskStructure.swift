@@ -19,7 +19,7 @@ struct AddTaskStructure : Hashable, Codable, Identifiable {
     var typestr: String
     var isfinish: Bool
     var isgrouptask: Bool
-    var member: [UserDataStructure]
+    var member: [String]
     
     init(){
         title = ""

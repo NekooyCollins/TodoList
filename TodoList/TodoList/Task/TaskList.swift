@@ -9,17 +9,13 @@ import SwiftUI
 
 struct TaskList: View {
     @ObservedObject private var manager = RequestHandle()
-    
-    init() {
-        manager.getUserData()
-        manager.getTaskList()
-    }
+    @State var bakToMain: Bool = false
     
     var body: some View {
         VStack (alignment: .leading){
             HStack{
                 Spacer()
-                NavigationLink(destination: AddTask()) {
+                NavigationLink(destination: AddTask(isDone: self.$bakToMain)) {
                    Text("Add Task  ")
                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                 }
@@ -28,11 +24,17 @@ struct TaskList: View {
             
             List{
                 ForEach(manager.taskList, id: \.self) { task in
-                    NavigationLink(destination: TaskDetail(task: task)) {
-                            TaskRow(task: task)
+                    if task.isfinish == false{
+                        NavigationLink(destination: TaskDetail(task: task)) {
+                                TaskRow(task: task)
+                        }
                     }
                 }
             }
+            .onAppear(perform: {
+                manager.getUserData()
+                manager.getTaskList()
+            })
         }
         .navigationBarTitle("Tasks")
     }

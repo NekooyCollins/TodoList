@@ -12,11 +12,14 @@ class RequestHandle: ObservableObject{
     @Published var authenticated = false
     @Published var legalregister = false
     @Published var getUserByEmailFlag = false
+    @Published var addTaskFlag = false
     @Published var currentUserEmail: String = ""
     @Published var userInfo = UserDataStructure()
+    @Published var tmpRetUser = UserDataStructure()
     @Published var taskList: [TaskDataStructure] = []
     @Published var taskMemberList: [UserDataStructure] = []
-    @Published var addTaskFlag = false
+
+
 
 
     func postLoginRequest(email: String, passwd: String) {
@@ -70,7 +73,7 @@ class RequestHandle: ObservableObject{
     func getUserData(){
         let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + localUserData.email
         let url = URL(string: urlString)!
-        print("ask for:" + localUserData.email)
+//        print("ask for:" + localUserData.email)
         
         var request = URLRequest(url: url)
         
@@ -97,7 +100,6 @@ class RequestHandle: ObservableObject{
                     self.userInfo = resData
                     // Store to local user data
                     localUserData = resData
-                    print("User email get is:" + localUserData.email)
                 }
             }
         }.resume()
@@ -106,7 +108,7 @@ class RequestHandle: ObservableObject{
     func getUserDataByEmail(email: String){
         let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + email
         let url = URL(string: urlString)!
-        print("ask for:" + localUserData.email)
+//        print("ask for:" + localUserData.email)
         
         var request = URLRequest(url: url)
         
@@ -130,11 +132,8 @@ class RequestHandle: ObservableObject{
             do{
                 let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
                 DispatchQueue.main.async {
-                    self.userInfo = resData
+                    self.tmpRetUser = resData
                     self.getUserByEmailFlag = true
-                    // Store to local user data
-//                    localUserData = resData
-//                    print("User email get is:" + localUserData.email)
                 }
             }
         }.resume()
