@@ -9,11 +9,11 @@ import SwiftUI
 
 struct MainPageView: View {
     @ObservedObject private var manager = RequestHandle()
+    @State var bakToMain : Bool = false
+
     
     init() {
         UITableView.appearance().backgroundColor = .clear
-        manager.getUserData()
-        manager.getTaskList()
     }
     
     var body: some View {
@@ -37,13 +37,16 @@ struct MainPageView: View {
                 Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 
                 VStack{
+                    
                     List{
                         let max = manager.taskList.count > 4 ? 4 : manager.taskList.count
                         ForEach(0..<max, id: \.self) { idx in
-                            NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
-                                TaskRow(task: manager.taskList[idx])
+                            if manager.taskList[idx].isfinish == false{
+                                NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
+                                    TaskRow(task: manager.taskList[idx])
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                     .padding(.all, -40.0)
@@ -51,13 +54,17 @@ struct MainPageView: View {
                     .listRowInsets(EdgeInsets())
                     .navigationBarHidden(true)
                     .frame(height: 180)
+                    .onAppear(perform: {
+                        manager.getUserData()
+                        manager.getTaskList()
+                    })
                 }
                 .padding(5.0)
                 
                 VStack (alignment: .leading){
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     HStack{
-                        NavigationLink(destination: AddTask()) {
+                        NavigationLink(destination: AddTask(isDone: $bakToMain)) {
                            Text("New Task")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
@@ -93,6 +100,10 @@ struct MainPageView: View {
         .frame(width: .infinity, height: .infinity, alignment: .topLeading)
         .navigationBarTitle(Text("Main page"))
         .navigationBarHidden(true)
+        .onAppear(perform: {
+            manager.getUserData()
+            manager.getTaskList()
+        })
     }
 }
 

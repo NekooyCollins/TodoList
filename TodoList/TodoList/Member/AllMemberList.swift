@@ -19,11 +19,11 @@ struct AllMemberList: View {
         VStack (alignment: .leading){
             HStack{
                 Spacer()
-                NavigationLink(destination: AddMember()) {
-                   Text("Add Member  ")
-                    .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                }
-                .buttonStyle(PlainButtonStyle())
+//                NavigationLink(destination: AddMember()) {
+//                   Text("Add Member  ")
+//                    .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+//                }
+//                .buttonStyle(PlainButtonStyle())
             }
 
             List{

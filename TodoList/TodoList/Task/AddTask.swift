@@ -9,14 +9,13 @@ import SwiftUI
 import UIKit
 
 struct AddTask: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Binding var isDone: Bool
     @ObservedObject private var manager = RequestHandle()
-    @ObservedObject private var tmpmanager = RequestHandle()
-    @State private var inputDuration: String = ""
-    @State private var inputType: String = ""
     @State private var newTask = AddTaskStructure()
-    @State private var tmpMem = UserDataStructure()
-    @State private var isDone = false
     @State private var addMember = false
+    @State private var inputDuration: String = ""
+    @State private var localMemList :[String] = []
 
     var body: some View {
         VStack{
@@ -47,23 +46,16 @@ struct AddTask: View {
                     Spacer()
                 }
                 List{
-                    ForEach(newTask.member, id: \.self) { mem in
-                            MemberRow(user: mem)
+                    ForEach(localMemList, id: \.self) { mem in
+//                        MemberRow(user: mem)
+                        Text(mem)
                     }
                 }
                 .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealWidth: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealHeight: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, maxHeight: 100, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                .onAppear()
+                
                 HStack{
-//                    NavigationLink(destination: AllMemberList(inputTask: newTask)) {
-//                       Text("All members")
-//                        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-//                    }
-//                    .buttonStyle(PlainButtonStyle())
                     Spacer().frame(width: 240)
-//                    NavigationLink(destination: AddMember()) {
-//                       Text("Add member")
-//                        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-//                    }
-//                    .buttonStyle(PlainButtonStyle())
                     Button(action: {
                         addMember = true
                     }) {
@@ -76,12 +68,12 @@ struct AddTask: View {
                                      message: "Enter member email") { result in
                             if let text = result {
                                 // Text was accepted
-                                print("Search for "+text)
-                                tmpmanager.getUserDataByEmail(email: text)
-                                if tmpmanager.getUserByEmailFlag {
-                                    tmpMem = tmpmanager.userInfo
-                                    newTask.member.append(tmpMem)
-                                    tmpmanager.getUserByEmailFlag = false
+                                if localMemList.contains(text) {
+                                   // it exists, do nothing
+                                } else {
+                                   // item could not be found
+                                    localMemList.append(text)
+                                    newTask.member.append(text)
                                 }
                             }
                            })
@@ -99,32 +91,24 @@ struct AddTask: View {
             }
             .padding()
 
-            // TODO: add 'Done' button here
-            VStack{
-                NavigationLink(
-                    destination: MainPageView(),
-                    isActive: $isDone){
-                    Button(action: {
-                        newTask.duration = Int(inputDuration) ?? 0
-                        self.manager.postAddTask(addTask: newTask)
-                        if self.manager.addTaskFlag == true{
-                            isDone = true
-                        }
-                    }) {
-                        Text("Done")
-                            .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                    }
-                }
-            }
-
             Spacer()
         }
         .navigationBarTitle("Add Task")
+        .navigationBarItems(trailing:
+            Button(action: {
+                self.isDone = false
+                newTask.duration = Int(inputDuration) ?? 0
+                self.manager.postAddTask(addTask: newTask)
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Done")
+                    .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+            })
     }
 }
 
-struct AddTask_Previews: PreviewProvider {
-    static var previews: some View {
-        AddTask()
-    }
-}
+//struct AddTask_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AddTask()
+//    }
+//}

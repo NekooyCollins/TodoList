@@ -15,11 +15,10 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
     var email: String
     var passwd: String
     
-    //FIXME: 
     init(){
         id      = 0;
-        name    = "Lisa"
-        email   = "lisa@apple.com"
-        passwd  = "12345678"
+        name    = ""
+        email   = ""
+        passwd  = ""
     }
 }
