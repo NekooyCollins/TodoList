@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject private var manager = RequestHandle()
     @State private var email: String = ""
     @State private var password: String = ""
@@ -77,8 +78,10 @@ struct LoginView: View {
                     isActive: $isAuth){
                     Button(action: {
                         self.manager.postLoginRequest(email:self.email, passwd:self.password)
+                        sleep(1)
                         if self.manager.authenticated == true {
                             isAuth = localAuth
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }) {
                         Text("Login")

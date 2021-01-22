@@ -11,7 +11,11 @@ import SwiftUI
 struct TodoListApp: App {
     var body: some Scene {
         WindowGroup {
-            MainPageView()
+            if localUserData.email == ""{
+                LoginView()
+            }else{
+                MainPageView()
+            }
         }
     }
 }

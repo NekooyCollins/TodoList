@@ -17,11 +17,10 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
 //    var totalFocusTime: Int
 //    var friends: [Int]
     
-    //FIXME: 
     init(){
         id      = 0;
-        name    = "Jobs"
-        email   = "jobs@apple.com"
-        passwd  = "apple123"
+        name    = ""
+        email   = ""
+        passwd  = ""
     }
 }
