@@ -99,7 +99,7 @@ struct TaskDetail: View {
                 .padding()
                 
                 VStack{
-                    NavigationLink(destination: ProcessTask()) {
+                    NavigationLink(destination: Countdown(task: task)) {
                        Text("Start")
                         .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                     }

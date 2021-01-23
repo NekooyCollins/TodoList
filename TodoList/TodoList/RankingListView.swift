@@ -9,9 +9,6 @@ import SwiftUI
 
 struct RankingListView: View {
     @ObservedObject private var rankingManager = RequestHandle()
-    init(){
-        rankingManager.getRankList(userid: String(localUserData.id))
-    }
     
     var body: some View {
         VStack{
@@ -22,6 +19,9 @@ struct RankingListView: View {
             }
         }
         .navigationBarTitle(Text("Ranking"))
+        .onAppear(perform: {
+            rankingManager.getRankList(userid: String(localUserData.id))
+        })
     }
 }
 
