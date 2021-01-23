@@ -21,6 +21,8 @@ class RequestHandle: ObservableObject{
     @Published var friendList: [UserDataStructure] = []
     @Published var rankList: [RankStructure] = []
     @Published var addFriendFlag = false
+    @Published var inviteToGroupTask = false
+    @Published var tmpRetTask = TaskDataStructure()
 
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
@@ -315,6 +317,39 @@ class RequestHandle: ObservableObject{
             }
         }.resume()
     }
-}
+    
+    func getGroupTaskState(){
+        let urlString: String = "http://127.0.0.1:8080/getgrouptaskstate?email=" + String(localUserData.id)
+        let url = URL(string: urlString)!
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard error == nil else {
+                print("Error: error get user data")
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("Error: Did not receive data")
+                return
+            }
+            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                print("Error: HTTP request failed")
+                return
+            }
+            do{
+                let resData = try! JSONDecoder().decode(TaskDataStructure.self, from: data)
+                DispatchQueue.main.async {
+                    self.inviteToGroupTask = true
+                    self.tmpRetTask = resData
+                    
+                }
+            }
+        }.resume()
+    }}
 
 

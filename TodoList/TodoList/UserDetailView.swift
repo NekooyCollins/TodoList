@@ -91,6 +91,7 @@ struct UserDetailView: View {
             NavigationLink(destination: LoginView()){
                 Button(action: {
                     print("logout action")
+                    
                 }) {
                     Text("Log out")
                         .fontWeight(.bold)
@@ -99,6 +100,7 @@ struct UserDetailView: View {
                 .frame(width: 300, height: 45, alignment: .center)
                 .background(Color.red)
                 .cornerRadius(20)
+                
             }
         }
         .padding(.horizontal)
