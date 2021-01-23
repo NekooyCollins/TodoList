@@ -97,7 +97,6 @@ struct UserDetailView: View {
                     localTaskList = []
                     localFriendList = []
                     self.isLogout = true
-//                    print("logout action")
                 }) {
                     Text("Log out")
                         .fontWeight(.bold)
@@ -106,6 +105,7 @@ struct UserDetailView: View {
                 .frame(width: 300, height: 45, alignment: .center)
                 .background(Color.red)
                 .cornerRadius(20)
+                
             }
         }
         .navigationBarTitle("Account")

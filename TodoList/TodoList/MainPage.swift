@@ -10,7 +10,9 @@ import SwiftUI
 struct MainPageView: View {
     @ObservedObject private var manager = RequestHandle()
     @State var bakToMain : Bool = false
-
+    // Create timer to check for group task update
+    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    @State private var showingAlert = false
     
     init() {
         UITableView.appearance().backgroundColor = .clear
@@ -108,7 +110,20 @@ struct MainPageView: View {
             manager.getUserData()
             manager.getTaskList()
         })
+        .onReceive(timer) { time in
+//            showingAlert = true
+            manager.getGroupTaskState()
+            if manager.inviteToGroupTask == true{
+                showingAlert = true
+            }
+        }
+        .alert(isPresented: $showingAlert){
+            Alert(title: Text("You are invited to task "+manager.tmpRetTask.title),
+                              message: Text("If you accept, please go to this task to start."),
+                              dismissButton: .default(Text("OK")))
+        }
     }
+
 }
 
 struct MainPageView_Previews: PreviewProvider {
