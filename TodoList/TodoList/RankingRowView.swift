@@ -13,25 +13,21 @@ struct RankingRowView: View {
     var body: some View {
         // single item
         HStack {
-            ZStack {
-                Circle().fill(Color.orange).scaleEffect(0.7)
-                Text(getShortMemName(fullName: rankItem.username))
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundColor(Color.white)
-                    .frame(width: 150.0)
-            }
-            ZStack{
-                Text(timeFormat(originalTime: rankItem.totalfocustime))
-                    .font(.title3)
-                    .fontWeight(.medium)
-                    .foregroundColor(Color.white)
-                    .frame(width: 150.0)
-            }
-            ZStack{
-                Spacer()
-                    .frame(width: 50.0)
-            }
+            Text(rankItem.username)
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(Color.white)
+                .frame(width: 150.0)
+            Spacer()
+            Text(timeFormat(originalTime: rankItem.totalfocustime))
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(Color.white)
+                .frame(width: 150.0)
+        
+            Spacer()
+                .frame(width: 50.0)
+            
         }
         .frame(height: 80.0)
         .background(SwiftUI.Color.yellow)

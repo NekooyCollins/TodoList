@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct Countdown: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @ObservedObject private var countdownManager = RequestHandle()
     @State private var showingAlert = false
     @State private var leave = false
     @State private var isActive = true
-    
-    // FIXME: timeRemaining(min)
-    @State private var timeRemaining = 20*60
+    @State private var timeRemaining = 0
     @State private var textContent = ""
+    var task: TaskDataStructure
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var finishSuccessfully: Bool {
@@ -23,7 +24,7 @@ struct Countdown: View {
     }
     
     var body: some View {
-        NavigationView{
+        
             VStack{
                 ZStack{
                     Circle()
@@ -31,7 +32,7 @@ struct Countdown: View {
                         .background(Circle().foregroundColor(Color.white))
                         .scaleEffect(0.7)
                     
-                    Text("\(timeFormat(originalTime:timeRemaining))")
+                    Text("\(showTimer(originalTime:timeRemaining))")
                         .font(.system(size: 46))
                         .fontWeight(.light)
                         .foregroundColor(Color.gray)
@@ -46,38 +47,41 @@ struct Countdown: View {
                 Spacer()
                     .frame(height: 100.0)
                     
-                NavigationLink(destination: MainPageView(), isActive: $leave){
-                    Button(action: {
-                        if timeRemaining != 0 {
-                            self.showingAlert = true
-                        } else{
-                            self.leave = true
-                        }
-                    }) {
-                        Text(finishSuccessfully ? "OK" : "Quit")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                Button(action: {
+                    if (timeRemaining != 0) {
+                        self.showingAlert = true
+                    } else{
+                        self.countdownManager.postTaksIsFinished(taskid: String(task.id))
+                        self.presentationMode.wrappedValue.dismiss()
                     }
-                    .frame(width: 300, height: 45, alignment: .center)
-                    .background(Color(UIColor.systemPink))
-                    .cornerRadius(10)
-                    .alert(isPresented: $showingAlert) {() -> Alert in
-                        let primaryButton = Alert.Button.default(Text("Yes")) {
-                            self.timeRemaining = 0
-                            self.leave = true
-                            print("Yes button pressed")
-                        }
-                        let secondaryButton = Alert.Button.cancel(Text("No")) {
-                            print("No button pressed")
-                        }
-                        return Alert(title: Text("Are you sure to leave?"), message: Text("Your task will fail :("), primaryButton: primaryButton, secondaryButton: secondaryButton)
+                }) {
+                    Text(finishSuccessfully ? "OK" : "Quit")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .frame(width: 300, height: 45, alignment: .center)
+                .background(Color(UIColor.systemPink))
+                .cornerRadius(10)
+                .alert(isPresented: $showingAlert) {() -> Alert in
+                    let primaryButton = Alert.Button.default(Text("Yes")) {
+                        self.timeRemaining = 0
+                        self.leave = true
+                        print("Yes button pressed")
+                        self.presentationMode.wrappedValue.dismiss()
                     }
+                    let secondaryButton = Alert.Button.cancel(Text("No")) {
+                        print("No button pressed")
+                    }
+                    return Alert(title: Text("Are you sure to leave?"), message: Text("Your task will fail :("), primaryButton: primaryButton, secondaryButton: secondaryButton)
                 }
                 
                 Spacer()
                     .frame(height: 150.0)
             }
+            .onAppear(perform: {
+                self.timeRemaining = task.duration * 60
+            })
             .navigationBarTitle("Countdown")
             .navigationBarBackButtonHidden(true)
             .onReceive(timer) { time in
@@ -92,15 +96,15 @@ struct Countdown: View {
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 self.isActive = true
             }
-        } // end of NavigationView
+       
     } // end of body view
 }
 
-struct Countdown_Previews: PreviewProvider {
-    static var previews: some View {
-        Countdown()
-    }
-}
+//struct Countdown_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Countdown()
+//    }
+//}
 
 
 

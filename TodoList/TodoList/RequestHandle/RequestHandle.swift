@@ -23,6 +23,7 @@ class RequestHandle: ObservableObject{
     @Published var addFriendFlag = false
     @Published var inviteToGroupTask = false
     @Published var tmpRetTask = TaskDataStructure()
+    @Published var taskFinishedFlag = false
 
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
@@ -144,6 +145,7 @@ class RequestHandle: ObservableObject{
     func getTaskList(){
         let url = URL(string: "http://127.0.0.1:8080/gettasklist?email="+localUserData.email)!
         var request = URLRequest(url: url)
+        var dataIsNull = false
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -161,10 +163,19 @@ class RequestHandle: ObservableObject{
                 print("Error: HTTP request failed")
                 return
             }
-            do{
-                let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.taskList = resData
+            do {
+                try JSONSerialization.jsonObject(with: data, options: [])
+            } catch {
+                dataIsNull = true
+                print("JSON error: \(error.localizedDescription)")
+            }
+            if (dataIsNull == false){
+                do{
+                    let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.taskList = resData
+                        localTaskList = resData
+                    }
                 }
             }
         }.resume()
@@ -232,6 +243,8 @@ class RequestHandle: ObservableObject{
                 let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
                 DispatchQueue.main.async {
                     self.friendList = resData
+                    localFriendList = []
+                    localFriendList = resData
                 }
             }
         }.resume()
@@ -351,5 +364,27 @@ class RequestHandle: ObservableObject{
             }
         }.resume()
     }}
+    func postTaksIsFinished(taskid: String){
+        guard let url = URL(string: "http://127.0.0.1:8080/settaskisfinished") else { return }
+        let body: [String: String] = ["taskid": taskid]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        self.taskFinishedFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
+}
 
 
