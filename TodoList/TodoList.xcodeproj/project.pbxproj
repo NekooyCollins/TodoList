@@ -143,7 +143,6 @@
 				463EE478259D2C0E0050B519 /* TaskDetail.swift */,
 				468D71A625BB40860087C31F /* ProcessTask.swift */,
 				4617B28725AA44D00055892A /* AddTask.swift */,
-				468CC0EE25AA55400064A11D /* ProcessTask.swift */,
 				7376FCF325B88852005F84BE /* Countdown.swift */,
 			);
 			path = Task;

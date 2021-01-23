@@ -10,6 +10,7 @@ import SwiftUI
 struct ShowFriends: View {
     @ObservedObject private var friendManager = RequestHandle()
     @State private var addFriend = false
+    @State private var firstTime = true
     
     var body: some View {
         VStack (alignment: .leading){
@@ -31,7 +32,6 @@ struct ShowFriends: View {
                          if let friendEmail = result {
                             print("Search for " + friendEmail)
                             friendManager.postAddFriend(myEmail:localUserData.email, friendEmail: friendEmail)
-                            friendManager.getFriendList(email: localUserData.email)
                          }
                  })
             }
@@ -39,7 +39,7 @@ struct ShowFriends: View {
             .padding(.horizontal)
             
             List{
-                ForEach(friendManager.friendList, id: \.self) { friend in
+                ForEach(localFriendList, id: \.self) { friend in
                     HStack{
                         Text(friend.name)
                             .foregroundColor(.orange)
@@ -53,11 +53,6 @@ struct ShowFriends: View {
                 friendManager.getFriendList(email: localUserData.email)
             })
         }
-        .navigationBarTitle("Friends")
-        .navigationBarHidden(true)
-        .onAppear(perform: {
-            friendManager.getFriendList(email: localUserData.email)
-        })
     }
 }
 

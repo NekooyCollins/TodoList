@@ -13,6 +13,7 @@ struct UserDetailView: View {
     @State private var username: String = ""
     @State private var uFlag = false
     @State private var eFlag = false
+    @State private var isLogout = false
 
     var body: some View {
         VStack {
@@ -88,9 +89,15 @@ struct UserDetailView: View {
             Spacer()
 
             // log out button
-            NavigationLink(destination: LoginView()){
+            NavigationLink(
+                destination: LoginView(),
+                isActive: $isLogout){
                 Button(action: {
-                    print("logout action")
+                    localUserData.email = ""
+                    localTaskList = []
+                    localFriendList = []
+                    self.isLogout = true
+//                    print("logout action")
                 }) {
                     Text("Log out")
                         .fontWeight(.bold)
@@ -101,18 +108,11 @@ struct UserDetailView: View {
                 .cornerRadius(20)
             }
         }
+        .navigationBarTitle("Account")
         .padding(.horizontal)
         .padding(.vertical, 50.0)
-//        .navigationBarHidden(true)
-//        .navigationBarTitle("Account")
     }
 }
-
-//struct UserDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        UserDetailView()
-//    }
-//}
 
 struct InfoPrefixedTextField: View {
     var iconName: String
