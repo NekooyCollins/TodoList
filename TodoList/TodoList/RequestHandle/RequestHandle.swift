@@ -24,9 +24,10 @@ class RequestHandle: ObservableObject{
     @Published var inviteToGroupTask = false
     @Published var tmpRetTask = TaskDataStructure()
     @Published var taskFinishedFlag = false
+    @Published var startGroupTaskFlag = false
 
     func postLoginRequest(email: String, passwd: String) {
-        guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
+        guard let url = URL(string: "http://192.168.31.91:8080/login") else { return }
         let body: [String: String] = ["email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -51,7 +52,7 @@ class RequestHandle: ObservableObject{
     }
     
     func postRegisterRequest(username: String, email: String, passwd: String){
-        guard let url = URL(string: "http://127.0.0.1:8080/register") else { return }
+        guard let url = URL(string: "http://192.168.31.91:8080/register") else { return }
         let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         
@@ -74,7 +75,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getUserData(){
-        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + localUserData.email
+        let urlString: String = "http://192.168.31.91:8080/getuserdata?email=" + localUserData.email
         let url = URL(string: urlString)!
 //        print("ask for:" + localUserData.email)
         
@@ -109,7 +110,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getUserDataByEmail(email: String){
-        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + email
+        let urlString: String = "http://192.168.31.91:8080/getuserdata?email=" + email
         let url = URL(string: urlString)!
 //        print("ask for:" + localUserData.email)
         
@@ -143,7 +144,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getTaskList(){
-        let url = URL(string: "http://127.0.0.1:8080/gettasklist?email="+localUserData.email)!
+        let url = URL(string: "http://192.168.31.91:8080/gettasklist?email="+localUserData.email)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -182,7 +183,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getTaskMember(taskid: String){
-        let url = URL(string: "http://127.0.0.1:8080/gettaskmember?taskid="+taskid)!
+        let url = URL(string: "http://192.168.31.91:8080/gettaskmember?taskid="+taskid)!
         
         var request = URLRequest(url: url)
         
@@ -212,7 +213,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getFriendList(email:String){
-        let url = URL(string: "http://127.0.0.1:8080/getfriendlist?email="+email)!
+        let url = URL(string: "http://192.168.31.91:8080/getfriendlist?email="+email)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -251,7 +252,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getRankList(userid: String){
-        let url = URL(string: "http://127.0.0.1:8080/getranklist?userid="+userid)!
+        let url = URL(string: "http://192.168.31.91:8080/getranklist?userid="+userid)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -289,7 +290,7 @@ class RequestHandle: ObservableObject{
     
     func postAddTask(addTask: AddTaskStructure) {
         
-        guard let url = URL(string: "http://127.0.0.1:8080/addtask") else { return }
+        guard let url = URL(string: "http://192.168.31.91:8080/addtask") else { return }
         let finalBody: Data = try! JSONEncoder().encode(addTask)
         var request = URLRequest(url: url)
         
@@ -310,7 +311,7 @@ class RequestHandle: ObservableObject{
     }
     
     func postAddFriend(myEmail: String, friendEmail: String) {
-        guard let url = URL(string: "http://127.0.0.1:8080/addfriend") else { return }
+        guard let url = URL(string: "http://192.168.31.91:8080/addfriend") else { return }
         let body: [String: String] = ["myemail": myEmail, "friendemail": friendEmail]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -332,7 +333,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getGroupTaskState(){
-        let urlString: String = "http://127.0.0.1:8080/getgrouptaskstate?email=" + String(localUserData.id)
+        let urlString: String = "http://192.168.31.91:8080/getgrouptaskstate?id=" + String(localUserData.id)
         let url = URL(string: urlString)!
         
         var request = URLRequest(url: url)
@@ -363,9 +364,10 @@ class RequestHandle: ObservableObject{
                 }
             }
         }.resume()
-    }}
+    }
+    
     func postTaksIsFinished(taskid: String){
-        guard let url = URL(string: "http://127.0.0.1:8080/settaskisfinished") else { return }
+        guard let url = URL(string: "http://192.168.31.91:8080/settaskisfinished") else { return }
         let body: [String: String] = ["taskid": taskid]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -385,6 +387,74 @@ class RequestHandle: ObservableObject{
             }
         }.resume()
     }
+    
+    func postStartGroupTask(task: TaskDataStructure){
+        guard let url = URL(string: "http://192.168.31.91:8080/startgrouptask") else { return }
+        let finalBody: Data = try! JSONEncoder().encode(task)
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+//                        self.startGroupTaskFlag = true
+                        print("create succeed")
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    func postJoinGroupTask(userid: Int, taskid: Int){
+        guard let url = URL(string: "http://192.168.31.91:8080/joingrouptask") else { return }
+        let body: [String: String] = ["userid": String(userid), "taskid": String(taskid)]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+//                        self.legalregister = true
+                        print("join succeed")
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    func checkStartGroupTask(taskid: Int){
+        guard let url = URL(string: "http://192.168.31.91:8080/checkstartgrouptask") else { return }
+        let body: [String: String] = ["taskid": String(taskid)]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        print("Task could start.")
+                        self.startGroupTaskFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
 }
-
-

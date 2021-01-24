@@ -7,17 +7,47 @@
 
 import SwiftUI
 
+//Button(action: {
+//    if task.isgrouptask == false{
+//        self.taskCanStart = true
+//    }else{
+//        if manager.startGroupTaskFlag == true {
+//            self.taskCanStart = true
+//        }else{
+//            self.showingAlert = true
+//            manager.postStartGroupTask(task: task)
+//            sleep(2)
+//            manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
+//            sleep(5)
+//            manager.checkStartGroupTask(taskid: task.id)
+//        }
+//    }
+//}) {
+//    Text("Start")
+//    .alert(isPresented: $showingAlert) {
+//            Alert(title: Text("Task will start after others join."), message: Text("Please wait"), dismissButton: .default(Text("Got it!")))
+//        }
+//
+//}
+//}
+
 struct Countdown: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @ObservedObject var manager = RequestHandle()
     @ObservedObject private var countdownManager = RequestHandle()
     @State private var showingAlert = false
     @State private var leave = false
-    @State private var isActive = true
+    @State private var isActive = false
     @State private var timeRemaining = 0
     @State private var textContent = ""
     var task: TaskDataStructure
+    @State private var showingAlert1 = false
+    @State private var showingAlert2 = false
+    @State private var waitingJoin = 30
     
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     var finishSuccessfully: Bool {
         leave == false &&
         timeRemaining == 0
@@ -75,6 +105,27 @@ struct Countdown: View {
                     }
                     return Alert(title: Text("Are you sure to leave?"), message: Text("Your task will fail :("), primaryButton: primaryButton, secondaryButton: secondaryButton)
                 }
+                .alert(isPresented: $showingAlert1) {() -> Alert in
+                    let primaryButton = Alert.Button.default(Text("Yes")) {
+//                        self.timeRemaining = 0
+//                        self.leave = true
+//                        print("Yes button pressed")
+//                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    return Alert(title: Text("Waiting others to join."), message: Text("Pleas wait for a moment"), primaryButton: primaryButton, secondaryButton: .cancel())
+                }
+                .alert(isPresented: $showingAlert2) {() -> Alert in
+                    let primaryButton = Alert.Button.default(Text("Yes")) {
+                        self.timeRemaining = 0
+                        self.leave = true
+                        print("Yes button pressed")
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+//                    let secondaryButton = Alert.Button.cancel(Text("No")) {
+//                        print("No button pressed")
+//                    }
+                    return Alert(title: Text("Can not start this task."), message: Text("Other members not able to join, please try again."), primaryButton: primaryButton, secondaryButton: .cancel())
+                }
                 
                 Spacer()
                     .frame(height: 150.0)
@@ -96,6 +147,37 @@ struct Countdown: View {
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 self.isActive = true
             }
+            .onReceive(timer2, perform: { time in
+                if waitingJoin > 0 && isActive == false {
+                    manager.checkStartGroupTask(taskid: task.id)
+                    if manager.startGroupTaskFlag == true {
+                        self.isActive = true
+                    }
+                    self.waitingJoin -= 1
+                }else{
+                    self.showingAlert2 = true
+                }
+            })
+            .onAppear(perform: {
+                if task.isgrouptask == false{
+                    self.isActive = true
+//                }else if manager.startGroupTaskFlag == true{
+//                    self.isActive = true
+                }else{
+                    self.showingAlert1 = true
+                    manager.postStartGroupTask(task: task)
+                    sleep(1)
+                    manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
+//                    sleep(30)
+//                    manager.checkStartGroupTask(taskid: task.id)
+//                    if manager.startGroupTaskFlag == true {
+//                        self.isActive = true
+//                    }else{
+//                        self.showingAlert2 = true
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    }
+                }
+            })
        
     } // end of body view
 }
