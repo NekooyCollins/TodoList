@@ -25,6 +25,7 @@ class RequestHandle: ObservableObject{
     @Published var tmpRetTask = TaskDataStructure()
     @Published var taskFinishedFlag = false
     @Published var startGroupTaskFlag = false
+    @Published var quitGroupTaskFlag = false
 
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://192.168.31.91:8080/login") else { return }
@@ -352,6 +353,7 @@ class RequestHandle: ObservableObject{
                 return
             }
             guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                self.inviteToGroupTask = false
                 print("Error: HTTP request failed")
                 return
             }
@@ -360,7 +362,6 @@ class RequestHandle: ObservableObject{
                 DispatchQueue.main.async {
                     self.inviteToGroupTask = true
                     self.tmpRetTask = resData
-                    
                 }
             }
         }.resume()
@@ -452,6 +453,54 @@ class RequestHandle: ObservableObject{
                     DispatchQueue.main.async {
                         print("Task could start.")
                         self.startGroupTaskFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    func quitGroupTask(taskid: Int){
+        guard let url = URL(string: "http://192.168.31.91:8080/quitgrouptask") else { return }
+        let body: [String: String] = ["taskid": String(taskid)]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        print("Quit this task.")
+//                        self.startGroupTaskFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    func checkGroupTaskQuit(taskid: Int){
+        guard let url = URL(string: "http://192.168.31.91:8080/checkgrouptaskquit") else { return }
+        let body: [String: String] = ["taskid": String(taskid)]
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)
+        
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        print("Quit this task.")
+                        self.quitGroupTaskFlag = true
                     }
                 }
             }

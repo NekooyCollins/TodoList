@@ -7,30 +7,6 @@
 
 import SwiftUI
 
-//Button(action: {
-//    if task.isgrouptask == false{
-//        self.taskCanStart = true
-//    }else{
-//        if manager.startGroupTaskFlag == true {
-//            self.taskCanStart = true
-//        }else{
-//            self.showingAlert = true
-//            manager.postStartGroupTask(task: task)
-//            sleep(2)
-//            manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
-//            sleep(5)
-//            manager.checkStartGroupTask(taskid: task.id)
-//        }
-//    }
-//}) {
-//    Text("Start")
-//    .alert(isPresented: $showingAlert) {
-//            Alert(title: Text("Task will start after others join."), message: Text("Please wait"), dismissButton: .default(Text("Got it!")))
-//        }
-//
-//}
-//}
-
 struct Countdown: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject var manager = RequestHandle()
@@ -38,6 +14,7 @@ struct Countdown: View {
     @State private var showingAlert = false
     @State private var leave = false
     @State private var isActive = false
+    @State private var startFlag = false
     @State private var timeRemaining = 0
     @State private var textContent = ""
     var task: TaskDataStructure
@@ -45,8 +22,9 @@ struct Countdown: View {
     @State private var showingAlert2 = false
     @State private var waitingJoin = 30
     
-    let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    let timer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Countdown timer.
+    let timer2 = Timer.publish(every: 2, on: .main, in: .common).autoconnect() // Wait other members to join a group task.
+    let timer3 = Timer.publish(every: 5, on: .main, in: .common).autoconnect() // Check if group task has been quit by ohters.
     
     var finishSuccessfully: Bool {
         leave == false &&
@@ -68,6 +46,11 @@ struct Countdown: View {
                         .foregroundColor(Color.gray)
                 }
                 .frame(height: 400.0)
+                
+                Text(startFlag == false && task.isgrouptask ? "Please wait others to join" : "")
+                    .font(.title)
+                    .fontWeight(.light)
+                    .foregroundColor(Color.orange)
                 
                 Text(finishSuccessfully ? "Well done!" : "Stay focus :)")
                     .font(.title)
@@ -98,6 +81,9 @@ struct Countdown: View {
                         self.timeRemaining = 0
                         self.leave = true
                         print("Yes button pressed")
+                        if task.isgrouptask == true{
+                            manager.quitGroupTask(taskid: task.id)
+                        }
                         self.presentationMode.wrappedValue.dismiss()
                     }
                     let secondaryButton = Alert.Button.cancel(Text("No")) {
@@ -105,28 +91,7 @@ struct Countdown: View {
                     }
                     return Alert(title: Text("Are you sure to leave?"), message: Text("Your task will fail :("), primaryButton: primaryButton, secondaryButton: secondaryButton)
                 }
-                .alert(isPresented: $showingAlert1) {() -> Alert in
-                    let primaryButton = Alert.Button.default(Text("Yes")) {
-//                        self.timeRemaining = 0
-//                        self.leave = true
-//                        print("Yes button pressed")
-//                        self.presentationMode.wrappedValue.dismiss()
-                    }
-                    return Alert(title: Text("Waiting others to join."), message: Text("Pleas wait for a moment"), primaryButton: primaryButton, secondaryButton: .cancel())
-                }
-                .alert(isPresented: $showingAlert2) {() -> Alert in
-                    let primaryButton = Alert.Button.default(Text("Yes")) {
-                        self.timeRemaining = 0
-                        self.leave = true
-                        print("Yes button pressed")
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
-//                    let secondaryButton = Alert.Button.cancel(Text("No")) {
-//                        print("No button pressed")
-//                    }
-                    return Alert(title: Text("Can not start this task."), message: Text("Other members not able to join, please try again."), primaryButton: primaryButton, secondaryButton: .cancel())
-                }
-                
+
                 Spacer()
                     .frame(height: 150.0)
             }
@@ -135,50 +100,49 @@ struct Countdown: View {
             })
             .navigationBarTitle("Countdown")
             .navigationBarBackButtonHidden(true)
-            .onReceive(timer) { time in
-                guard self.isActive else { return }
-                if self.timeRemaining > 0 {
-                    self.timeRemaining -= 1
-                }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                self.isActive = false
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                self.isActive = true
-            }
-            .onReceive(timer2, perform: { time in
-                if waitingJoin > 0 && isActive == false {
-                    manager.checkStartGroupTask(taskid: task.id)
-                    if manager.startGroupTaskFlag == true {
-                        self.isActive = true
-                    }
-                    self.waitingJoin -= 1
-                }else{
-                    self.showingAlert2 = true
-                }
-            })
             .onAppear(perform: {
                 if task.isgrouptask == false{
-                    self.isActive = true
-//                }else if manager.startGroupTaskFlag == true{
-//                    self.isActive = true
+                    self.startFlag = true
                 }else{
-                    self.showingAlert1 = true
                     manager.postStartGroupTask(task: task)
                     sleep(1)
                     manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
-//                    sleep(30)
-//                    manager.checkStartGroupTask(taskid: task.id)
-//                    if manager.startGroupTaskFlag == true {
-//                        self.isActive = true
-//                    }else{
-//                        self.showingAlert2 = true
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    }
                 }
             })
-       
+            .onReceive(timer) { time in
+                if self.startFlag == true{
+                    if self.timeRemaining > 0 {
+                        self.timeRemaining -= 1
+                    }
+                }
+            }
+            .onReceive(timer2, perform: { time in
+                if task.isgrouptask == false{
+                    self.timer2.upstream.connect().cancel()
+                    self.startFlag = true
+                }
+                if waitingJoin > 0 {
+                    manager.checkStartGroupTask(taskid: task.id)
+                    if manager.startGroupTaskFlag == true {
+                        self.startFlag = true
+                    }
+                    self.waitingJoin -= 2
+                }else{
+                    if startFlag == false{
+                        self.showingAlert2 = true
+                    }
+                }
+            })
+            .onReceive(timer3, perform: { time in
+                if task.isgrouptask == true && self.startFlag == true{
+                    manager.checkGroupTaskQuit(taskid: task.id)
+                    if manager.quitGroupTaskFlag == true{
+                        self.timeRemaining = 0
+                        self.leave = true
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            })
     } // end of body view
 }
 
