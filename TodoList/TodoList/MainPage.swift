@@ -11,7 +11,7 @@ struct MainPageView: View {
     @ObservedObject private var manager = RequestHandle()
     @State var bakToMain : Bool = false
     // Create timer to check for group task update
-    let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
     @State private var showingAlert = false
     
     init() {

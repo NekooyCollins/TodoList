@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct TaskDetail: View {
-    @ObservedObject private var manager = RequestHandle()
+    @ObservedObject var manager = RequestHandle()
+    @State private var taskCanStart = false
+    @State private var showingAlert = false
     var task: TaskDataStructure
     
     var body: some View {
