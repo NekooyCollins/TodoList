@@ -15,7 +15,7 @@ struct TaskList: View {
         VStack (alignment: .leading){
             HStack{
                 Spacer()
-                NavigationLink(destination: AddTask(isDone: self.$bakToMain)) {
+                NavigationLink(destination: AddTask()) {
                    Text("Add Task  ")
                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                 }
