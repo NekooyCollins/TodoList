@@ -18,13 +18,15 @@ struct Countdown: View {
     @State private var timeRemaining = 0
     @State private var textContent = ""
     var task: TaskDataStructure
-    @State private var showingAlert1 = false
-    @State private var showingAlert2 = false
+    @State private var showingAlert1 = false // Alert when battery level is lower than 10%.
+    @State private var showingAlert2 = false // Alert when others in a group task quit.
     @State private var waitingJoin = 30
     
     let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Countdown timer.
-    let timer2 = Timer.publish(every: 2, on: .main, in: .common).autoconnect() // Wait other members to join a group task.
-    let timer3 = Timer.publish(every: 5, on: .main, in: .common).autoconnect() // Check if group task has been quit by ohters.
+    let timer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Wait other members to join a group task.
+    let timer3 = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Check if group task has been quit by ohters.
+    @State private var postInterval = 3
+    @State private var postCount = 0
     
     var finishSuccessfully: Bool {
         leave == false &&
@@ -56,6 +58,37 @@ struct Countdown: View {
                     .font(.title)
                     .fontWeight(.light)
                     .foregroundColor(Color.orange)
+                
+                Text("")
+                    .alert(isPresented: $showingAlert1){() -> Alert in
+                        let primaryButton = Alert.Button.default(Text("Yes")) {
+                            self.leave = true
+                            print("Yes button pressed")
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                        let secondaryButton = Alert.Button.cancel(Text("Cancel")) {
+                            print("No button pressed")
+                        }
+                        return Alert(title: Text("Failed to start group task. Pleas try again."), message: Text("Task will return"), primaryButton: primaryButton, secondaryButton: secondaryButton)
+                    }
+                
+                Text("")
+                    .onAppear(perform: {
+                        if checkBatteryLevel() > 0.0 && checkBatteryLevel() < 0.1 {
+                            self.showingAlert2 = true
+                        }
+                    })
+                    .alert(isPresented: $showingAlert2){() -> Alert in
+                        let primaryButton = Alert.Button.default(Text("Yes")) {
+                            self.leave = true
+                            print("Yes button pressed")
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                        let secondaryButton = Alert.Button.cancel(Text("Cancel")) {
+                            print("No button pressed")
+                        }
+                        return Alert(title: Text("Battery low, can not start group task."), message: Text("Please charge and try again."), primaryButton: primaryButton, secondaryButton: secondaryButton)
+                    }
                     
                 Spacer()
                     .frame(height: 100.0)
@@ -98,6 +131,11 @@ struct Countdown: View {
             .onAppear(perform: {
                 self.timeRemaining = task.duration * 60
             })
+            .onAppear(perform: {
+                if checkBatteryLevel() < 0.1{
+                    self.showingAlert1 = true
+                }
+            })
             .navigationBarTitle("Countdown")
             .navigationBarBackButtonHidden(true)
             .onAppear(perform: {
@@ -109,6 +147,7 @@ struct Countdown: View {
                     manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
                 }
             })
+
             .onReceive(timer) { time in
                 if self.startFlag == true{
                     if self.timeRemaining > 0 {
@@ -122,24 +161,48 @@ struct Countdown: View {
                     self.startFlag = true
                 }
                 if waitingJoin > 0 {
-                    manager.checkStartGroupTask(taskid: task.id)
-                    if manager.startGroupTaskFlag == true {
-                        self.startFlag = true
+                    self.postCount += 1
+                    // Change check post request frequency based on battery level.
+                    if checkBatteryLevel() < 0.3 && checkBatteryLevel() > 0.1 {
+                       postInterval = 10
+                    }else if checkBatteryLevel() > 0.3{
+                        postInterval = 3
+                    }else{
+                        postInterval = 1000
                     }
-                    self.waitingJoin -= 2
+                    
+                    if postCount % postInterval == 0{
+                        manager.checkStartGroupTask(taskid: task.id)
+                        if manager.startGroupTaskFlag == true {
+                            self.startFlag = true
+                        }
+                        self.waitingJoin -= postInterval
+                    }
                 }else{
                     if startFlag == false{
-                        self.showingAlert2 = true
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             })
             .onReceive(timer3, perform: { time in
+                self.postCount += 1
                 if task.isgrouptask == true && self.startFlag == true{
-                    manager.checkGroupTaskQuit(taskid: task.id)
-                    if manager.quitGroupTaskFlag == true{
-                        self.timeRemaining = 0
-                        self.leave = true
-                        self.presentationMode.wrappedValue.dismiss()
+                    // Change check post request frequency based on battery level.
+                    if checkBatteryLevel() < 0.3 && checkBatteryLevel() > 0.1 {
+                       postInterval = 10
+                    }else if checkBatteryLevel() > 0.3{
+                        postInterval = 3
+                    }else{
+                        postInterval = 1000
+                    }
+                    
+                    if postCount % postInterval == 0 {
+                        manager.checkGroupTaskQuit(taskid: task.id)
+                        if manager.quitGroupTaskFlag == true{
+                            self.timeRemaining = 0
+                            self.leave = true
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
                     }
                 }
             })
