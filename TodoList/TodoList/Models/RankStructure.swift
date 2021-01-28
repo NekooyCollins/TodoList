@@ -16,4 +16,9 @@ struct RankStructure : Hashable, Codable {
         username = ""
         totalfocustime = 0
     }
+    
+    func convertToDictionary() -> [String : Any] {
+        let dic: [String: Any] = ["username":self.username, "totalfocustime":self.totalfocustime]
+        return dic
+    }
 }

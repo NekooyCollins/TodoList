@@ -24,6 +24,7 @@ class RequestHandle: ObservableObject{
     @Published var inviteToGroupTask = false
     @Published var tmpRetTask = TaskDataStructure()
     @Published var taskFinishedFlag = false
+    @Published var isNetworkAvailable = false
     @Published var startGroupTaskFlag = false
     @Published var quitGroupTaskFlag = false
 
@@ -36,7 +37,7 @@ class RequestHandle: ObservableObject{
         request.httpMethod = "POST"
         request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
+            
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let httpResponse = response as? HTTPURLResponse {
                 print(httpResponse.statusCode)
@@ -84,30 +85,38 @@ class RequestHandle: ObservableObject{
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print("Error: error get user data")
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do{
-                let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
-                DispatchQueue.main.async {
-                    self.userInfo = resData
-                    // Store to local user data
-                    localUserData = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print("Error: error get user data")
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do{
+                    let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
+                    DispatchQueue.main.async {
+                        self.userInfo = resData
+                        // Store to local user data
+                        localUserData = resData
+                    }
+                }
+            }.resume()
+            
+        }else{
+            print("Internet Connection not Available!")
+            self.userInfo = localUserData
+        }
     }
     
     func getUserDataByEmail(email: String){
@@ -151,36 +160,44 @@ class RequestHandle: ObservableObject{
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if (dataIsNull == false){
-                do{
-                    let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
-                    DispatchQueue.main.async {
-                        self.taskList = resData
-                        localTaskList = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if (dataIsNull == false){
+                    do{
+                        let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
+                        DispatchQueue.main.async {
+                            self.taskList = resData
+                            localTaskList = resData
+                        }
                     }
                 }
-            }
-        }.resume()
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.taskList = localTaskList
+        }
     }
     
     func getTaskMember(taskid: String){
@@ -220,36 +237,43 @@ class RequestHandle: ObservableObject{
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
             
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if(dataIsNull == false){
-                let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.friendList = resData
-                    localFriendList = []
-                    localFriendList = resData
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if(dataIsNull == false){
+                    let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.friendList = resData
+                        localFriendList = resData
+                    }
+                }
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.friendList = localFriendList
+        }
     }
     
     func getRankList(userid: String){
@@ -259,33 +283,42 @@ class RequestHandle: ObservableObject{
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if(dataIsNull == false){
-                let resData = try! JSONDecoder().decode([RankStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.rankList = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if(dataIsNull == false){
+                    let resData = try! JSONDecoder().decode([RankStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.rankList = resData
+                        localRankList = resData
+                    }
+                }
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.rankList = localRankList
+        }
     }
     
     

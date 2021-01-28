@@ -11,6 +11,7 @@ struct ShowFriends: View {
     @ObservedObject private var friendManager = RequestHandle()
     @State private var addFriend = false
     @State private var firstTime = true
+    let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack (alignment: .leading){
@@ -51,8 +52,22 @@ struct ShowFriends: View {
             }
             .onAppear(perform: {
                 friendManager.getFriendList(email: localUserData.email)
+                saveFriendsToLocalFile(friends: localFriendList)
             })
         }
+        .onReceive(saveLocallyTimer) { time in
+            saveFriendsToLocalFile(friends: localFriendList)
+        }
+    }
+    
+    func saveFriendsToLocalFile(friends: [UserDataStructure]){        
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let friendFilePath = homePath.appendingPathComponent("friends.json")
+        
+        let friendListDict = friends.map{$0.convertToDictionary()}
+        let data = try! JSONSerialization.data(withJSONObject: friendListDict,
+                                                           options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: friendFilePath, options: .atomic)
     }
 }
 
