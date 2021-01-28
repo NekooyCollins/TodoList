@@ -21,4 +21,9 @@ struct UserDataStructure : Hashable, Codable, Identifiable {
         email   = ""
         passwd  = ""
     }
+    
+    func convertToDictionary() -> [String : Any] {
+        let dic: [String: Any] = ["id":self.id, "name":self.name, "email":self.email, "passwd":self.passwd]
+        return dic
+    }
 }

@@ -29,4 +29,11 @@ struct TaskDataStructure : Hashable, Codable, Identifiable {
         isfinish = false
         isgrouptask = false
     }
+    
+    func convertToDictionary() -> [String : Any] {
+        let dic: [String: Any] = ["id":self.id, "title":self.title, "description":self.description, "duration":self.duration,
+                                  "remaintime":self.remaintime, "typestr":self.typestr, "isfinish":self.isfinish,
+                                  "isgrouptask":self.isgrouptask]
+        return dic
+    }
 }

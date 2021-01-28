@@ -34,18 +34,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
 
-    @IBAction func saveLoginTapped(_ sender: UIButton){
-        SceneDelegate.isLogin = true
-        let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UIHostingController(rootView: MainPageView())
-        UIApplication.setRootView(LoginView.ins)
-    }
-    
-    @IBAction func clearLoginTapped(_ sender: UIButton){
-        SceneDelegate.isLogin = false
-        let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UIHostingController(rootView: LoginView())
-    }
+//    @IBAction func saveLoginTapped(_ sender: UIButton){
+//        SceneDelegate.isLogin = true
+//        let window = UIWindow(windowScene: windowScene)
+//        window.rootViewController = UIHostingController(rootView: MainPageView())
+//        UIApplication.setRootView(LoginView.ins)
+//    }
+//
+//    @IBAction func clearLoginTapped(_ sender: UIButton){
+//        SceneDelegate.isLogin = false
+//        let window = UIWindow(windowScene: windowScene)
+//        window.rootViewController = UIHostingController(rootView: LoginView())
+//    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
@@ -57,6 +57,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+//        let _ = HandleLocalFile.createLocalFile()
+//        let _ = localUserData = HandleLocalFile.loadUserJson()
+//        if localUserData.email != ""{
+//            SceneDelegate.isLogin = true
+//        }
     }
 
     func sceneWillResignActive(_ scene: UIScene) {

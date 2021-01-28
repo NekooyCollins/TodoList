@@ -12,6 +12,7 @@ struct MainPageView: View {
     @State var bakToMain : Bool = false
     // Create timer to check for group task update
     let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
     @State private var showingAlert = false
     
     init() {
@@ -80,9 +81,6 @@ struct MainPageView: View {
                     }
                     
                     Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-//                    Text("Statistics")
-//                        .bold()
-//                        .font(.title2)
                     HStack{
                         NavigationLink(destination: ShowFriends()) {
                            Text("See Friends")
@@ -109,9 +107,10 @@ struct MainPageView: View {
         .onAppear(perform: {
             manager.getUserData()
             manager.getTaskList()
+            saveUserToLocalFile(user: localUserData)
+            saveTaskToLocalFile(task: localTaskList)
         })
         .onReceive(timer) { time in
-//            showingAlert = true
             manager.getGroupTaskState()
             if manager.inviteToGroupTask == true{
                 showingAlert = true
@@ -122,8 +121,42 @@ struct MainPageView: View {
                               message: Text("If you accept, please go to this task to start."),
                               dismissButton: .default(Text("OK")))
         }
+        .onReceive(saveLocallyTimer) { time in
+            saveUserToLocalFile(user: localUserData)
+            saveTaskToLocalFile(task: localTaskList)
+        }
     }
+    
+    func saveUserToLocalFile(user: UserDataStructure){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let userFilePath = homePath.appendingPathComponent("userdata.json")
+        
+        let userJSONArr = try! JSONEncoder().encode(user)
+        let jsonString = String(data: userJSONArr, encoding: .utf8)!
+        print("saveUserLocal function:" + jsonString)
 
+        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
+        let os = OutputStream(url: userFilePath, append: false)
+        
+        os?.open()
+        JSONSerialization.writeJSONObject(userDict,
+                                          to: os!,
+                                          options: JSONSerialization.WritingOptions.prettyPrinted,
+                                          error: NSErrorPointer.none)
+        os?.close()
+    }
+    
+    func saveTaskToLocalFile(task: [TaskDataStructure]){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let taskFilePath = homePath.appendingPathComponent("taskdata.json")
+        
+        let taskListDict = task.map{$0.convertToDictionary()}
+        print("saveTaskLocal function:")
+        print(taskListDict)
+        let data = try! JSONSerialization.data(withJSONObject: taskListDict,
+                                                   options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: taskFilePath, options: .atomic)
+    }
 }
 
 struct MainPageView_Previews: PreviewProvider {

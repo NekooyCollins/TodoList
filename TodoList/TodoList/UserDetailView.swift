@@ -8,12 +8,10 @@
 import SwiftUI
 
 struct UserDetailView: View {
-
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var uFlag = false
     @State private var eFlag = false
-    @State private var isLogout = false
 
     var body: some View {
         VStack {
@@ -89,24 +87,20 @@ struct UserDetailView: View {
             Spacer()
 
             // log out button
-            NavigationLink(
-                destination: LoginView(),
-                isActive: $isLogout){
-                Button(action: {
-                    localUserData.email = ""
-                    localTaskList = []
-                    localFriendList = []
-                    self.isLogout = true
-                }) {
-                    Text("Log out")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-                .frame(width: 300, height: 45, alignment: .center)
-                .background(Color.red)
-                .cornerRadius(20)
+//            Button(action: {
+//                localUserData.email = ""
+//                localTaskList = []
+//                localFriendList = []
+//            }) {
+//                Text("Log out")
+//                    .fontWeight(.bold)
+//                    .foregroundColor(.white)
+//            }
+//            .frame(width: 300, height: 45, alignment: .center)
+//            .background(Color.red)
+//            .cornerRadius(20)
                 
-            }
+           
         }
         .navigationBarTitle("Account")
         .padding(.horizontal)
@@ -135,6 +129,3 @@ struct InfoPrefixedTextField: View {
             .frame(height: 20.0)
     }
 }
-
-
-

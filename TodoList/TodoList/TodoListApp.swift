@@ -11,9 +11,14 @@ import SwiftUI
 struct TodoListApp: App {
     var body: some Scene {
         WindowGroup {
-            if localUserData.email == ""{
+            if  UserDefaults.standard.value(forKey: "isLogin") == nil{
+                let _ = HandleLocalFile.createLocalFile()
                 LoginView()
             }else{
+                let _ = localUserData = HandleLocalFile.loadUserJson()
+                let _ = localTaskList = HandleLocalFile.loadTaskJson()
+                let _ = localRankList = HandleLocalFile.loadRankJson()
+                let _ = localFriendList = HandleLocalFile.loadFriendsJson()
                 MainPageView()
             }
         }

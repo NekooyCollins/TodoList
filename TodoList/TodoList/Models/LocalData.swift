@@ -13,6 +13,7 @@ var localAuth = false
 var localUserData = UserDataStructure()
 var localTaskList: [TaskDataStructure] = []
 var localFriendList: [UserDataStructure] = []
+var localRankList: [RankStructure] = []
 
 
 // var for test

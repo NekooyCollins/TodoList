@@ -24,9 +24,10 @@ class RequestHandle: ObservableObject{
     @Published var inviteToGroupTask = false
     @Published var tmpRetTask = TaskDataStructure()
     @Published var taskFinishedFlag = false
+    @Published var isNetworkAvailable = false
 
     func postLoginRequest(email: String, passwd: String) {
-        guard let url = URL(string: "http://127.0.0.1:8080/login") else { return }
+        guard let url = URL(string: "http://192.168.31.36:8080/login") else { return }
         let body: [String: String] = ["email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -34,7 +35,7 @@ class RequestHandle: ObservableObject{
         request.httpMethod = "POST"
         request.httpBody = finalBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
+            
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let httpResponse = response as? HTTPURLResponse {
                 print(httpResponse.statusCode)
@@ -51,7 +52,7 @@ class RequestHandle: ObservableObject{
     }
     
     func postRegisterRequest(username: String, email: String, passwd: String){
-        guard let url = URL(string: "http://127.0.0.1:8080/register") else { return }
+        guard let url = URL(string: "http://192.168.31.36:8080/register") else { return }
         let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         
@@ -74,7 +75,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getUserData(){
-        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + localUserData.email
+        let urlString: String = "http://192.168.31.36:8080/getuserdata?email=" + localUserData.email
         let url = URL(string: urlString)!
 //        print("ask for:" + localUserData.email)
         
@@ -82,34 +83,42 @@ class RequestHandle: ObservableObject{
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print("Error: error get user data")
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do{
-                let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
-                DispatchQueue.main.async {
-                    self.userInfo = resData
-                    // Store to local user data
-                    localUserData = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print("Error: error get user data")
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do{
+                    let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
+                    DispatchQueue.main.async {
+                        self.userInfo = resData
+                        // Store to local user data
+                        localUserData = resData
+                    }
+                }
+            }.resume()
+            
+        }else{
+            print("Internet Connection not Available!")
+            self.userInfo = localUserData
+        }
     }
     
     func getUserDataByEmail(email: String){
-        let urlString: String = "http://127.0.0.1:8080/getuserdata?email=" + email
+        let urlString: String = "http://192.168.31.36:8080/getuserdata?email=" + email
         let url = URL(string: urlString)!
 //        print("ask for:" + localUserData.email)
         
@@ -143,46 +152,54 @@ class RequestHandle: ObservableObject{
     }
     
     func getTaskList(){
-        let url = URL(string: "http://127.0.0.1:8080/gettasklist?email="+localUserData.email)!
+        let url = URL(string: "http://192.168.31.36:8080/gettasklist?email="+localUserData.email)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if (dataIsNull == false){
-                do{
-                    let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
-                    DispatchQueue.main.async {
-                        self.taskList = resData
-                        localTaskList = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if (dataIsNull == false){
+                    do{
+                        let resData = try! JSONDecoder().decode([TaskDataStructure].self, from: data)
+                        DispatchQueue.main.async {
+                            self.taskList = resData
+                            localTaskList = resData
+                        }
                     }
                 }
-            }
-        }.resume()
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.taskList = localTaskList
+        }
     }
     
     func getTaskMember(taskid: String){
-        let url = URL(string: "http://127.0.0.1:8080/gettaskmember?taskid="+taskid)!
+        let url = URL(string: "http://192.168.31.36:8080/gettaskmember?taskid="+taskid)!
         
         var request = URLRequest(url: url)
         
@@ -212,84 +229,100 @@ class RequestHandle: ObservableObject{
     }
     
     func getFriendList(email:String){
-        let url = URL(string: "http://127.0.0.1:8080/getfriendlist?email="+email)!
+        let url = URL(string: "http://192.168.31.36:8080/getfriendlist?email="+email)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
             
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if(dataIsNull == false){
-                let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.friendList = resData
-                    localFriendList = []
-                    localFriendList = resData
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if(dataIsNull == false){
+                    let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.friendList = resData
+                        localFriendList = resData
+                    }
+                }
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.friendList = localFriendList
+        }
     }
     
     func getRankList(userid: String){
-        let url = URL(string: "http://127.0.0.1:8080/getranklist?userid="+userid)!
+        let url = URL(string: "http://192.168.31.36:8080/getranklist?userid="+userid)!
         var request = URLRequest(url: url)
         var dataIsNull = false
         
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do {
-                try JSONSerialization.jsonObject(with: data, options: [])
-            } catch {
-                dataIsNull = true
-                print("JSON error: \(error.localizedDescription)")
-            }
-            if(dataIsNull == false){
-                let resData = try! JSONDecoder().decode([RankStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.rankList = resData
+        
+        if Reachability.isConnectedToNetwork(){
+            print("Internet Connection Available!")
+            
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do {
+                    try JSONSerialization.jsonObject(with: data, options: [])
+                } catch {
+                    dataIsNull = true
+                    print("JSON error: \(error.localizedDescription)")
+                }
+                if(dataIsNull == false){
+                    let resData = try! JSONDecoder().decode([RankStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.rankList = resData
+                        localRankList = resData
+                    }
+                }
+            }.resume()
+            
+        } else{
+            print("Internet Connection not Available!")
+            self.rankList = localRankList
+        }
     }
     
     
     func postAddTask(addTask: AddTaskStructure) {
         
-        guard let url = URL(string: "http://127.0.0.1:8080/addtask") else { return }
+        guard let url = URL(string: "http://192.168.31.36:8080/addtask") else { return }
         let finalBody: Data = try! JSONEncoder().encode(addTask)
         var request = URLRequest(url: url)
         
@@ -310,7 +343,7 @@ class RequestHandle: ObservableObject{
     }
     
     func postAddFriend(myEmail: String, friendEmail: String) {
-        guard let url = URL(string: "http://127.0.0.1:8080/addfriend") else { return }
+        guard let url = URL(string: "http://192.168.31.36:8080/addfriend") else { return }
         let body: [String: String] = ["myemail": myEmail, "friendemail": friendEmail]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -332,7 +365,7 @@ class RequestHandle: ObservableObject{
     }
     
     func getGroupTaskState(){
-        let urlString: String = "http://127.0.0.1:8080/getgrouptaskstate?email=" + String(localUserData.id)
+        let urlString: String = "http://192.168.31.36:8080/getgrouptaskstate?email=" + String(localUserData.id)
         let url = URL(string: urlString)!
         
         var request = URLRequest(url: url)
@@ -363,9 +396,10 @@ class RequestHandle: ObservableObject{
                 }
             }
         }.resume()
-    }}
+    }
+    
     func postTaksIsFinished(taskid: String){
-        guard let url = URL(string: "http://127.0.0.1:8080/settaskisfinished") else { return }
+        guard let url = URL(string: "http://192.168.31.36:8080/settaskisfinished") else { return }
         let body: [String: String] = ["taskid": taskid]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
