@@ -19,17 +19,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Use a UIHostingController as window root view controller
         if let windowScene = scene as? UIWindowScene {
-            if SceneDelegate.isLogin == true{
-                let window = UIWindow(windowScene: windowScene)
-                window.rootViewController = UIHostingController(rootView: MainPageView())
-                self.window = window
-                window.makeKeyAndVisible()
-            }else{
-                let window = UIWindow(windowScene: windowScene)
-                window.rootViewController = UIHostingController(rootView: LoginView())
-                self.window = window
-                window.makeKeyAndVisible()
-            }
+//            if SceneDelegate.isLogin == true{
+            let window = UIWindow(windowScene: windowScene)
+            window.rootViewController = UIHostingController(rootView: MainPageView())
+            self.window = window
+            window.makeKeyAndVisible()
+//            }else{
+//                let window = UIWindow(windowScene: windowScene)
+//                window.rootViewController = UIHostingController(rootView: LoginView())
+//                self.window = window
+//                window.makeKeyAndVisible()
+//            }
 
         }
     }
