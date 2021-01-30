@@ -207,11 +207,5 @@ struct Countdown: View {
     } // end of body view
 }
 
-//struct Countdown_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Countdown()
-//    }
-//}
-
 
 

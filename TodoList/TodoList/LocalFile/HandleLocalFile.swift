@@ -165,4 +165,55 @@ public class HandleLocalFile {
         }
         return rankList
     }
+    
+    class func saveUserToLocalFile(user: UserDataStructure){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let userFilePath = homePath.appendingPathComponent("userdata.json")
+        
+        let userJSONArr = try! JSONEncoder().encode(user)
+        let jsonString = String(data: userJSONArr, encoding: .utf8)!
+        print("saveUserLocal function:" + jsonString)
+
+        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
+        let os = OutputStream(url: userFilePath, append: false)
+        
+        os?.open()
+        JSONSerialization.writeJSONObject(userDict,
+                                          to: os!,
+                                          options: JSONSerialization.WritingOptions.prettyPrinted,
+                                          error: NSErrorPointer.none)
+        os?.close()
+    }
+    
+    class func saveTaskToLocalFile(task: [TaskDataStructure]){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let taskFilePath = homePath.appendingPathComponent("taskdata.json")
+        
+        let taskListDict = task.map{$0.convertToDictionary()}
+        print("saveTaskLocal function:")
+        print(taskListDict)
+        let data = try! JSONSerialization.data(withJSONObject: taskListDict,
+                                                   options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: taskFilePath, options: .atomic)
+    }
+    
+    class func saveFriendsToLocalFile(friends: [UserDataStructure]){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let friendFilePath = homePath.appendingPathComponent("friends.json")
+        
+        let friendListDict = friends.map{$0.convertToDictionary()}
+        let data = try! JSONSerialization.data(withJSONObject: friendListDict,
+                                                           options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: friendFilePath, options: .atomic)
+    }
+    
+    class func saveRankToLocalFile(ranklist: [RankStructure]){
+        let homePath = HandleLocalFile.getDocumentsDirectory()
+        let rankFilePath = homePath.appendingPathComponent("ranking.json")
+        
+        let rankListDict = ranklist.map{$0.convertToDictionary()}
+        let data = try! JSONSerialization.data(withJSONObject: rankListDict,
+                                                   options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: rankFilePath, options: .atomic)
+    }
 }

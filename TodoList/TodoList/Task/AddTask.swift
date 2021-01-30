@@ -10,14 +10,15 @@ import SwiftUI
 import UIKit
 
 struct AddTask: View {
+
     @FetchRequest(entity: Task.entity(), sortDescriptors: []) var tasks: FetchedResults<Task>
-    
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject private var manager = RequestHandle()
     @State private var newTask = AddTaskStructure()
     @State private var addMember = false
     @State private var inputDuration: String = ""
     @State private var localMemList :[String] = []
+    @State private var lostConnection = false
 
     var body: some View {
         VStack{
@@ -49,7 +50,6 @@ struct AddTask: View {
                 }
                 List{
                     ForEach(localMemList, id: \.self) { mem in
-//                        MemberRow(user: mem)
                         Text(mem)
                     }
                 }
@@ -59,7 +59,12 @@ struct AddTask: View {
                 HStack{
                     Spacer().frame(width: 240)
                     Button(action: {
-                        addMember = true
+                        if Reachability.isConnectedToNetwork(){
+                            addMember = true
+                        } else{
+                            lostConnection = true
+                        }
+                        
                     }) {
                         Text("Add member")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
@@ -78,7 +83,10 @@ struct AddTask: View {
                                     newTask.member.append(text)
                                 }
                             }
-                           })
+                        })
+                    .alert(isPresented: $lostConnection) { () -> Alert in
+                        Alert(title: Text("Network is not available :("), message: Text("you can't create group task now"))
+                    }
                 }
                 .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealWidth: 30, maxWidth:.infinity, minHeight: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, idealHeight: 10, maxHeight: 20, alignment: .topTrailing)
             }
@@ -101,7 +109,6 @@ struct AddTask: View {
             Button(action: {
                 newTask.duration = Int(inputDuration) ?? 0
                 self.manager.postAddTask(addTask: newTask)
-                
                 self.presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Done")
@@ -109,9 +116,3 @@ struct AddTask: View {
             })
     }
 }
-
-//struct AddTask_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AddTask()
-//    }
-//}

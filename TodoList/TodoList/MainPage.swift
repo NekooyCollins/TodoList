@@ -48,13 +48,13 @@ struct MainPageView: View {
                 VStack{
                     
                     List{
-                        let max = manager.taskList.count > 4 ? 4 : manager.taskList.count
-                        ForEach(0..<max, id: \.self) { idx in
-                            if manager.taskList[idx].isfinish == false{
-                                NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
-                                    TaskRow(task: manager.taskList[idx])
+                        var max = 0;
+                        ForEach(manager.taskList, id: \.self) { task in
+                            if task.isfinish == false && max < 4{
+                                NavigationLink(destination: TaskDetail(task: task)) {
+                                        TaskRow(task: task)
                                 }
-                                .buttonStyle(PlainButtonStyle())
+                                let _ = max+=1
                             }
                         }
                     }
@@ -113,8 +113,10 @@ struct MainPageView: View {
         .onAppear(perform: {
             manager.getUserData()
             manager.getTaskList()
-            saveUserToLocalFile(user: localUserData)
-            saveTaskToLocalFile(task: localTaskList)
+//            manager.getRankList(userid: String(localUserData.id))
+            HandleLocalFile.saveUserToLocalFile(user: localUserData)
+            HandleLocalFile.saveTaskToLocalFile(task: localTaskList)
+//            HandleLocalFile.saveRankToLocalFile(ranklist: localRankList)
         })
         .onReceive(timer) { time in
             self.postCount += 1
@@ -140,8 +142,8 @@ struct MainPageView: View {
                               dismissButton: .default(Text("OK")))
         }
         .onReceive(saveLocallyTimer) { time in
-            saveUserToLocalFile(user: localUserData)
-            saveTaskToLocalFile(task: localTaskList)
+            HandleLocalFile.saveUserToLocalFile(user: localUserData)
+            HandleLocalFile.saveTaskToLocalFile(task: localTaskList)
         }
         .onReceive(updateTimer){ time in
             if !Reachability.isConnectedToNetwork(){
@@ -153,37 +155,6 @@ struct MainPageView: View {
                 connFlag = false
             }
         }
-    }
-    
-    func saveUserToLocalFile(user: UserDataStructure){
-        let homePath = HandleLocalFile.getDocumentsDirectory()
-        let userFilePath = homePath.appendingPathComponent("userdata.json")
-        
-        let userJSONArr = try! JSONEncoder().encode(user)
-        let jsonString = String(data: userJSONArr, encoding: .utf8)!
-        print("saveUserLocal function:" + jsonString)
-
-        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
-        let os = OutputStream(url: userFilePath, append: false)
-        
-        os?.open()
-        JSONSerialization.writeJSONObject(userDict,
-                                          to: os!,
-                                          options: JSONSerialization.WritingOptions.prettyPrinted,
-                                          error: NSErrorPointer.none)
-        os?.close()
-    }
-    
-    func saveTaskToLocalFile(task: [TaskDataStructure]){
-        let homePath = HandleLocalFile.getDocumentsDirectory()
-        let taskFilePath = homePath.appendingPathComponent("taskdata.json")
-        
-        let taskListDict = task.map{$0.convertToDictionary()}
-        print("saveTaskLocal function:")
-        print(taskListDict)
-        let data = try! JSONSerialization.data(withJSONObject: taskListDict,
-                                                   options: JSONSerialization.WritingOptions.prettyPrinted)
-        try! data.write(to: taskFilePath, options: .atomic)
     }
 }
 
