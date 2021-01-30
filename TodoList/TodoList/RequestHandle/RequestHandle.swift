@@ -28,6 +28,7 @@ class RequestHandle: ObservableObject{
     @Published var startGroupTaskFlag = false
     @Published var quitGroupTaskFlag = false
 
+    // Alreaday check connection
     func postLoginRequest(email: String, passwd: String) {
         guard let url = URL(string: "http://192.168.31.91:8080/login") else { return }
         let body: [String: String] = ["email": email, "passwd": passwd]
@@ -53,6 +54,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func postRegisterRequest(username: String, email: String, passwd: String){
         guard let url = URL(string: "http://192.168.31.91:8080/register") else { return }
         let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
@@ -76,6 +78,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Alreaday check connection
     func getUserData(){
         let urlString: String = "http://192.168.31.91:8080/getuserdata?email=" + localUserData.email
         let url = URL(string: urlString)!
@@ -119,40 +122,7 @@ class RequestHandle: ObservableObject{
         }
     }
     
-    func getUserDataByEmail(email: String){
-        let urlString: String = "http://192.168.31.91:8080/getuserdata?email=" + email
-        let url = URL(string: urlString)!
-//        print("ask for:" + localUserData.email)
-        
-        var request = URLRequest(url: url)
-        
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print("Error: error get user data")
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do{
-                let resData = try! JSONDecoder().decode(UserDataStructure.self, from: data)
-                DispatchQueue.main.async {
-                    self.tmpRetUser = resData
-                    self.getUserByEmailFlag = true
-                }
-            }
-        }.resume()
-    }
-    
+    // Alreaday check connection
     func getTaskList(){
         let url = URL(string: "http://192.168.31.91:8080/gettasklist?email="+localUserData.email)!
         var request = URLRequest(url: url)
@@ -200,6 +170,7 @@ class RequestHandle: ObservableObject{
         }
     }
     
+    // Not check connection
     func getTaskMember(taskid: String){
         let url = URL(string: "http://192.168.31.91:8080/gettaskmember?taskid="+taskid)!
         
@@ -230,6 +201,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Alreaday check connection
     func getFriendList(email:String){
         let url = URL(string: "http://192.168.31.91:8080/getfriendlist?email="+email)!
         var request = URLRequest(url: url)
@@ -276,6 +248,7 @@ class RequestHandle: ObservableObject{
         }
     }
     
+    // Alreaday check connection
     func getRankList(userid: String){
         let url = URL(string: "http://192.168.31.91:8080/getranklist?userid="+userid)!
         var request = URLRequest(url: url)
@@ -321,7 +294,7 @@ class RequestHandle: ObservableObject{
         }
     }
     
-    
+    // Not check connection
     func postAddTask(addTask: AddTaskStructure) {
         
         guard let url = URL(string: "http://192.168.31.91:8080/addtask") else { return }
@@ -344,6 +317,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func postAddFriend(myEmail: String, friendEmail: String) {
         guard let url = URL(string: "http://192.168.31.91:8080/addfriend") else { return }
         let body: [String: String] = ["myemail": myEmail, "friendemail": friendEmail]
@@ -366,6 +340,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func getGroupTaskState(){
         let urlString: String = "http://192.168.31.91:8080/getgrouptaskstate?id=" + String(localUserData.id)
         let url = URL(string: urlString)!
@@ -400,6 +375,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func postTaksIsFinished(taskid: String){
         guard let url = URL(string: "http://192.168.31.91:8080/settaskisfinished") else { return }
         let body: [String: String] = ["taskid": taskid]
@@ -422,6 +398,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func postStartGroupTask(task: TaskDataStructure){
         guard let url = URL(string: "http://192.168.31.91:8080/startgrouptask") else { return }
         let finalBody: Data = try! JSONEncoder().encode(task)
@@ -444,6 +421,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func postJoinGroupTask(userid: Int, taskid: Int){
         guard let url = URL(string: "http://192.168.31.91:8080/joingrouptask") else { return }
         let body: [String: String] = ["userid": String(userid), "taskid": String(taskid)]
@@ -468,6 +446,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func checkStartGroupTask(taskid: Int){
         guard let url = URL(string: "http://192.168.31.91:8080/checkstartgrouptask") else { return }
         let body: [String: String] = ["taskid": String(taskid)]
@@ -492,6 +471,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Not check connection
     func quitGroupTask(taskid: Int){
         guard let url = URL(string: "http://192.168.31.91:8080/quitgrouptask") else { return }
         let body: [String: String] = ["taskid": String(taskid)]
@@ -516,6 +496,7 @@ class RequestHandle: ObservableObject{
         }.resume()
     }
     
+    // Note check connection
     func checkGroupTaskQuit(taskid: Int){
         guard let url = URL(string: "http://192.168.31.91:8080/checkgrouptaskquit") else { return }
         let body: [String: String] = ["taskid": String(taskid)]
@@ -534,6 +515,27 @@ class RequestHandle: ObservableObject{
                     DispatchQueue.main.async {
                         print("Quit this task.")
                         self.quitGroupTaskFlag = true
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    func postLocalDataUpdate(){
+        let url = URL(string: "http://192.168.31.91:8080/postlocaldataupdate?userid="+String(localUserData.id))!
+        let finalBody: Data = try! JSONEncoder().encode(localTaskList)
+        var request = URLRequest(url: url)
+        
+        request.httpMethod = "POST"
+        request.httpBody = finalBody
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode == 200{
+                    DispatchQueue.main.async {
+                        self.addTaskFlag = true
                     }
                 }
             }
