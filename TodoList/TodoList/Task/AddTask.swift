@@ -10,14 +10,9 @@ import SwiftUI
 import UIKit
 
 struct AddTask: View {
-//    AppDelegate *appDelegate = [[UIApplication TodoListApp] delegate];
-//
-//    NSManagedObjectContext *managedObjectContext = appDelegate.managedObjectContext;
-    @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(entity: Task.entity(), sortDescriptors: []) var tasks: FetchedResults<Task>
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-//    @Binding var isDone: Bool
     @ObservedObject private var manager = RequestHandle()
     @State private var newTask = AddTaskStructure()
     @State private var addMember = false
@@ -104,20 +99,8 @@ struct AddTask: View {
         .navigationBarTitle("Add Task")
         .navigationBarItems(trailing:
             Button(action: {
-//                self.isDone = false
                 newTask.duration = Int(inputDuration) ?? 0
                 self.manager.postAddTask(addTask: newTask)
-                // Save data to local core data.
-                let newTaskData = Task(context: managedObjectContext)
-                newTaskData.title = newTask.title
-                newTaskData.taskDescription = newTask.description
-                newTaskData.duration = Int16(newTask.duration)
-                newTaskData.remaintime = Int16(newTask.remaintime)
-                newTaskData.typestr = newTask.typestr
-                newTaskData.isfinish = newTask.isfinish
-                newTaskData.isgrouptask = newTask.isgrouptask
-                newTaskData.isupdate = false
-                try! self.managedObjectContext.save()
                 
                 self.presentationMode.wrappedValue.dismiss()
             }) {

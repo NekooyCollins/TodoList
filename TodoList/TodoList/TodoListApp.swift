@@ -16,14 +16,14 @@ struct TodoListApp: App {
             if  UserDefaults.standard.value(forKey: "isLogin") == nil{
                 let _ = HandleLocalFile.createLocalFile()
                 LoginView()
-                    .environment(\.managedObjectContext, persistentContainer.viewContext)
+//                    .environment(\.managedObjectContext, persistentContainer.viewContext)
             }else{
                 let _ = localUserData = HandleLocalFile.loadUserJson()
                 let _ = localTaskList = HandleLocalFile.loadTaskJson()
                 let _ = localRankList = HandleLocalFile.loadRankJson()
                 let _ = localFriendList = HandleLocalFile.loadFriendsJson()
                 MainPageView()
-                    .environment(\.managedObjectContext, persistentContainer.viewContext)
+//                    .environment(\.managedObjectContext, persistentContainer.viewContext)
             }
         }
     }
