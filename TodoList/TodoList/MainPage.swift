@@ -13,12 +13,13 @@ struct MainPageView: View {
     @ObservedObject private var manager = RequestHandle()
     @State var bakToMain : Bool = false
     // Create timer to check for group task update
-    // let timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
     let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let updateTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     @State private var showingAlert = false
     @State private var postInterval = 3
     @State private var postCount = 0
+    @State private var connFlag = false
     
     init() {
         UITableView.appearance().backgroundColor = .clear
@@ -143,6 +144,16 @@ struct MainPageView: View {
         .onReceive(saveLocallyTimer) { time in
             HandleLocalFile.saveUserToLocalFile(user: localUserData)
             HandleLocalFile.saveTaskToLocalFile(task: localTaskList)
+        }
+        .onReceive(updateTimer){ time in
+            if !Reachability.isConnectedToNetwork(){
+                connFlag = true
+            }
+            if Reachability.isConnectedToNetwork() && connFlag == true{
+                // Need to update data to backend server.
+                manager.postLocalDataUpdate()
+                connFlag = false
+            }
         }
     }
 }

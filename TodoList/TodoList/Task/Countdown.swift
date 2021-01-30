@@ -18,8 +18,8 @@ struct Countdown: View {
     @State private var timeRemaining = 0
     @State private var textContent = ""
     var task: TaskDataStructure
-    @State private var showingAlert1 = false // Alert when battery level is lower than 10%.
-    @State private var showingAlert2 = false // Alert when others in a group task quit.
+    @State private var showingAlert1 = false // Alert when others in a group task quit.
+    @State private var showingAlert2 = false // Alert when battery level is lower than 10%.
     @State private var waitingJoin = 30
     
     let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Countdown timer.
@@ -68,6 +68,7 @@ struct Countdown: View {
                         }
                         let secondaryButton = Alert.Button.cancel(Text("Cancel")) {
                             print("No button pressed")
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                         return Alert(title: Text("Failed to start group task. Pleas try again."), message: Text("Task will return"), primaryButton: primaryButton, secondaryButton: secondaryButton)
                     }
@@ -86,6 +87,7 @@ struct Countdown: View {
                         }
                         let secondaryButton = Alert.Button.cancel(Text("Cancel")) {
                             print("No button pressed")
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                         return Alert(title: Text("Battery low, can not start group task."), message: Text("Please charge and try again."), primaryButton: primaryButton, secondaryButton: secondaryButton)
                     }
@@ -131,11 +133,6 @@ struct Countdown: View {
             .onAppear(perform: {
                 self.timeRemaining = task.duration * 60
             })
-            .onAppear(perform: {
-                if checkBatteryLevel() < 0.1{
-                    self.showingAlert1 = true
-                }
-            })
             .navigationBarTitle("Countdown")
             .navigationBarBackButtonHidden(true)
             .onAppear(perform: {
@@ -180,7 +177,8 @@ struct Countdown: View {
                     }
                 }else{
                     if startFlag == false{
-                        self.presentationMode.wrappedValue.dismiss()
+                        showingAlert1 = true;
+//                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             })
