@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import CoreLocation
 
-struct TaskDataStructure : Hashable, Codable, Identifiable {
+struct TaskDataStructure : Hashable, Codable, Identifiable, Equatable {
     var id : Int
     var title: String
     var description: String
@@ -35,5 +35,12 @@ struct TaskDataStructure : Hashable, Codable, Identifiable {
                                   "remaintime":self.remaintime, "typestr":self.typestr, "isfinish":self.isfinish,
                                   "isgrouptask":self.isgrouptask]
         return dic
+    }
+    
+    func == (left: TaskDataStructure, right: TaskDataStructure) -> Bool {
+        return (left.title == right.title) &&
+            (left.description == right.description) &&
+            (left.typestr == right.typestr) &&
+            (left.duration == right.duration)
     }
 }
