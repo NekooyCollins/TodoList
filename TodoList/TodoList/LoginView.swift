@@ -43,6 +43,7 @@ struct LoginView: View {
                         Image(systemName: "envelope")
                             .foregroundColor(Color.orange)
                         TextField("email address", text: $email, onCommit: {})
+                            .autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/)
                     }
                     Divider()
                         .padding(.top, 1.0)

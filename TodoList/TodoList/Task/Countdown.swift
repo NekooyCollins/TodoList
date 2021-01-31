@@ -131,6 +131,11 @@ struct Countdown: View {
                     .frame(height: 150.0)
             }
             .onAppear(perform: {
+                if !Reachability.isConnectedToNetwork() && task.isgrouptask == true{
+                    showingAlert1 = true
+                }
+            })
+            .onAppear(perform: {
                 self.timeRemaining = task.duration * 60
             })
             .navigationBarTitle("Countdown")
@@ -140,7 +145,7 @@ struct Countdown: View {
                     self.startFlag = true
                 }else{
                     manager.postStartGroupTask(task: task)
-                    sleep(1)
+                    sleep(2)
                     manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
                 }
             })
@@ -164,7 +169,7 @@ struct Countdown: View {
                        postInterval = 10
                     }else if checkBatteryLevel() > 0.3{
                         postInterval = 3
-                    }else{
+                    }else if checkBatteryLevel() < 0.1 && checkBatteryLevel() > 0.0{
                         postInterval = 1000
                     }
                     
@@ -178,7 +183,6 @@ struct Countdown: View {
                 }else{
                     if startFlag == false{
                         showingAlert1 = true;
-//                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             })

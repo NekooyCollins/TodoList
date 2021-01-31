@@ -10,7 +10,7 @@ import SwiftUI
 import CoreLocation
 
 struct TaskDataStructure : Hashable, Codable, Identifiable, Equatable {
-    var id : Int
+    var id : UUID
     var title: String
     var description: String
     var duration: Int
@@ -21,7 +21,7 @@ struct TaskDataStructure : Hashable, Codable, Identifiable, Equatable {
     
     init(){
         title = ""
-        id = 0
+        id = UUID()
         description = ""
         duration = 60
         remaintime = 60
@@ -31,7 +31,7 @@ struct TaskDataStructure : Hashable, Codable, Identifiable, Equatable {
     }
     
     func convertToDictionary() -> [String : Any] {
-        let dic: [String: Any] = ["id":self.id, "title":self.title, "description":self.description, "duration":self.duration,
+        let dic: [String: Any] = ["id":self.id.uuidString, "title":self.title, "description":self.description, "duration":self.duration,
                                   "remaintime":self.remaintime, "typestr":self.typestr, "isfinish":self.isfinish,
                                   "isgrouptask":self.isgrouptask]
         return dic

@@ -14,7 +14,7 @@ struct MainPageView: View {
     @State var bakToMain : Bool = false
     // Create timer to check for group task update
     let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     let updateTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     @State private var showingAlert = false
     @State private var postInterval = 3
@@ -46,27 +46,26 @@ struct MainPageView: View {
                 Spacer().frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 10, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 
                 VStack{
-                    
                     List{
-                        var max = 0;
-                        ForEach(manager.taskList, id: \.self) { task in
-                            if task.isfinish == false && max < 4{
-                                NavigationLink(destination: TaskDetail(task: task)) {
-                                        TaskRow(task: task)
+                        let max = manager.taskList.count > 4 ? 4 : manager.taskList.count
+                        ForEach(0..<max, id: \.self) { idx in
+                            if manager.taskList[idx].isfinish == false{
+                                NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
+                                    TaskRow(task: manager.taskList[idx])
                                 }
-                                let _ = max+=1
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                     }
+                    .onAppear(perform: {
+                        manager.getUserData()
+                        manager.getTaskList()
+                    })
                     .padding(.all, -40.0)
                     .navigationBarTitle("Tasks")
                     .listRowInsets(EdgeInsets())
                     .navigationBarHidden(true)
                     .frame(height: 180)
-                    .onAppear(perform: {
-                        manager.getUserData()
-                        manager.getTaskList()
-                    })
                 }
                 .padding(5.0)
                 
@@ -123,14 +122,15 @@ struct MainPageView: View {
                postInterval = 10
             }else if checkBatteryLevel() > 0.3{
                 postInterval = 3
-            }else{
+            }else if checkBatteryLevel() < 0.1 && checkBatteryLevel() > 0.0{
                 postInterval = 1000
             }
-            
+
             if postCount % postInterval == 0{
                 manager.getGroupTaskState()
                 if manager.inviteToGroupTask == true{
                     showingAlert = true
+                    manager.inviteToGroupTask = false
                 }
             }
         }

@@ -32,6 +32,7 @@ class RequestHandle: ObservableObject{
     func postLoginRequest(email: String, passwd: String) {
         let urlString = url + "/login"
         guard let url = URL(string: urlString) else { return }
+
         let body: [String: String] = ["email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -62,8 +63,10 @@ class RequestHandle: ObservableObject{
     
     // Not check connection
     func postRegisterRequest(username: String, email: String, passwd: String){
+        print("I am register")
         let urlString = url + "/register"
         guard let url = URL(string: urlString) else { return }
+        
         let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         
@@ -92,9 +95,9 @@ class RequestHandle: ObservableObject{
     
     // Alreaday check connection
     func getUserData(){
+        print("I am get user data")
         let urlString = url + "/getuserdata?email=" + localUserData.email
         let url = URL(string: urlString)!
-//        print("ask for:" + localUserData.email)
         
         var request = URLRequest(url: url)
         
@@ -102,7 +105,6 @@ class RequestHandle: ObservableObject{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if Reachability.isConnectedToNetwork(){
-            print("Internet Connection Available!")
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
@@ -135,8 +137,10 @@ class RequestHandle: ObservableObject{
     }
     
     func getTaskList(){
+        print("I am get task list")
         let urlString = url + "/gettasklist?email=" + localUserData.email
         let url = URL(string: urlString)!
+      
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -144,7 +148,6 @@ class RequestHandle: ObservableObject{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if Reachability.isConnectedToNetwork(){
-            print("Internet Connection Available!")
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
@@ -183,8 +186,9 @@ class RequestHandle: ObservableObject{
     }
     
     // Not check connection
-    func getTaskMember(taskid: String){
-        let urlString = url + "/gettaskmember?taskid=" + taskid
+    func getTaskMember(taskid: UUID){
+        print("I am get task member")
+        let urlString = url + "/gettaskmember?taskid=" + taskid.uuidString
         let url = URL(string: urlString)!
         
         var request = URLRequest(url: url)
@@ -216,8 +220,10 @@ class RequestHandle: ObservableObject{
     
     // Alreaday check connection
     func getFriendList(email:String){
+        print("I am get friend list")
         let urlString = url + "/getfriendlist?email=" + email
         let url = URL(string: urlString)!
+
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -225,7 +231,6 @@ class RequestHandle: ObservableObject{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if Reachability.isConnectedToNetwork(){
-            print("Internet Connection Available!")
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
@@ -263,9 +268,11 @@ class RequestHandle: ObservableObject{
     }
     
     // Alreaday check connection
-    func getRankList(userid: String){
-        let urlString = url + "/getranklist?userid=" + userid
+    func getRankList(userid: UUID){
+        print("I am get rank list")
+        let urlString = url + "/getranklist?userid=" + userid.uuidString
         let url = URL(string: urlString)!
+
         var request = URLRequest(url: url)
         var dataIsNull = false
         
@@ -273,7 +280,6 @@ class RequestHandle: ObservableObject{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if Reachability.isConnectedToNetwork(){
-            print("Internet Connection Available!")
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
@@ -311,8 +317,11 @@ class RequestHandle: ObservableObject{
     
     // Not check connection
     func postAddTask(addTask: AddTaskStructure) {
+        print("I am post add task")
+        
         let urlString = url + "/addtask"
         guard let url = URL(string: urlString) else { return }
+
         let finalBody: Data = try! JSONEncoder().encode(addTask)
         var request = URLRequest(url: url)
         
@@ -352,8 +361,10 @@ class RequestHandle: ObservableObject{
     
     // Not check connection
     func postAddFriend(myEmail: String, friendEmail: String) {
+        print("I am post add friend")
         let urlString = url + "/addfriend"
         guard let url = URL(string: urlString) else { return }
+
         let body: [String: String] = ["myemail": myEmail, "friendemail": friendEmail]
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
@@ -376,7 +387,8 @@ class RequestHandle: ObservableObject{
     
     // Not check connection
     func getGroupTaskState(){
-        let urlString = url + "/getgrouptaskstate?id=" + String(localUserData.id)
+        print("I am get group task state")
+        let urlString = url + "/getgrouptaskstate?id=" + localUserData.id.uuidString
         let url = URL(string: urlString)!
         
         var request = URLRequest(url: url)
@@ -395,7 +407,6 @@ class RequestHandle: ObservableObject{
                 return
             }
             guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                self.inviteToGroupTask = false
                 print("Error: HTTP request failed")
                 return
             }
@@ -410,9 +421,11 @@ class RequestHandle: ObservableObject{
     }
     
     func postTaksIsFinished(finishedTask: TaskDataStructure){
+        print("I am post task is finished")
         let urlString = url + "/settaskisfinished"
         guard let url = URL(string: urlString) else { return }
-        let body: [String: String] = ["taskid": String(finishedTask.id)]
+        let body: [String: String] = ["taskid": finishedTask.id.uuidString]
+
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)
         
@@ -432,7 +445,7 @@ class RequestHandle: ObservableObject{
                 }
             }.resume()
         } else{
-            for idx in 0...localTaskList.count{
+            for idx in 0...localTaskList.count-1{
                 if localTaskList[idx] == finishedTask{
                     localTaskList[idx].isfinish = true
                     print("Update finish flag successful")
@@ -443,8 +456,10 @@ class RequestHandle: ObservableObject{
     
     // Not check connection
     func postStartGroupTask(task: TaskDataStructure){
+        print("I am post start group task")
         let urlString = url + "/startgrouptask"
         guard let url = URL(string: urlString) else { return }
+
         let finalBody: Data = try! JSONEncoder().encode(task)
         var request = URLRequest(url: url)
         
@@ -457,7 +472,6 @@ class RequestHandle: ObservableObject{
                 print(httpResponse.statusCode)
                 if httpResponse.statusCode == 200{
                     DispatchQueue.main.async {
-//                        self.startGroupTaskFlag = true
                         print("create succeed")
                     }
                 }
@@ -466,12 +480,13 @@ class RequestHandle: ObservableObject{
     }
     
     // Not check connection
-    func postJoinGroupTask(userid: Int, taskid: Int){
+    func postJoinGroupTask(userid: UUID, taskid: UUID){
+        print("I am join group task")
         let urlString = url + "/checkstartgrouptask"
         guard let url = URL(string: urlString) else { return }
-        let body: [String: String] = ["userid": String(userid), "taskid": String(taskid)]
+        let body: [String: String] = ["userid": userid.uuidString, "taskid": taskid.uuidString]
+
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
-        
         var request = URLRequest(url: url)
         
         request.httpMethod = "POST"
@@ -483,7 +498,6 @@ class RequestHandle: ObservableObject{
                 print(httpResponse.statusCode)
                 if httpResponse.statusCode == 200{
                     DispatchQueue.main.async {
-//                        self.legalregister = true
                         print("join succeed")
                     }
                 }
@@ -492,12 +506,13 @@ class RequestHandle: ObservableObject{
     }
     
     // Not check connection
-    func checkStartGroupTask(taskid: Int){
+    func checkStartGroupTask(taskid: UUID){
+        print("I am check group task")
         let urlString = url + "/checkstartgrouptask"
         guard let url = URL(string: urlString) else { return }
-        let body: [String: String] = ["taskid": String(taskid)]
+        let body: [String: String] = ["taskid": taskid.uuidString]
+
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
-        
         var request = URLRequest(url: url)
         
         request.httpMethod = "POST"
@@ -518,12 +533,13 @@ class RequestHandle: ObservableObject{
     }
     
     // Not check connection
-    func quitGroupTask(taskid: Int){
+    func quitGroupTask(taskid: UUID){
+        print("quit group task")
         let urlString = url + "/quitgrouptask"
         guard let url = URL(string: urlString) else { return }
-        let body: [String: String] = ["taskid": String(taskid)]
-        let finalBody = try! JSONSerialization.data(withJSONObject: body)
-        
+        let body: [String: String] = ["taskid": taskid.uuidString]
+
+        let finalBody = try! JSONSerialization.data(withJSONObject: body)  
         var request = URLRequest(url: url)
         
         request.httpMethod = "POST"
@@ -536,7 +552,6 @@ class RequestHandle: ObservableObject{
                 if httpResponse.statusCode == 200{
                     DispatchQueue.main.async {
                         print("Quit this task.")
-//                        self.startGroupTaskFlag = true
                     }
                 }
             }
@@ -544,12 +559,13 @@ class RequestHandle: ObservableObject{
     }
     
     // Note check connection
-    func checkGroupTaskQuit(taskid: Int){
+    func checkGroupTaskQuit(taskid: UUID){
+        print("I am check group task quit")
         let urlString = url + "/checkgrouptaskquit"
         guard let url = URL(string: urlString) else { return }
-        let body: [String: String] = ["taskid": String(taskid)]
+        let body: [String: String] = ["taskid": taskid.uuidString]
+
         let finalBody = try! JSONSerialization.data(withJSONObject: body)
-        
         var request = URLRequest(url: url)
         
         request.httpMethod = "POST"
@@ -570,8 +586,10 @@ class RequestHandle: ObservableObject{
     }
     
     func postLocalDataUpdate(){
-        let urlString = url + "/postlocaldataupdate?userid=" + String(localUserData.id)
+        print("I am update local data")
+        let urlString = url + "/postlocaldataupdate?userid=" + localUserData.id.uuidString
         let url = URL(string: urlString)!
+
         let finalBody: Data = try! JSONEncoder().encode(localTaskList)
         var request = URLRequest(url: url)
         
