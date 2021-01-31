@@ -50,7 +50,7 @@ public class HandleLocalFile {
         
         // no such file, creat one and init it
         if exist1 == false {
-            let dictionary:NSDictionary = ["id":0, "name":"", "email":"", "passwd":""]
+            let dictionary:NSDictionary = ["id":"", "name":"", "email":"", "passwd":""]
             dictionary.write(to: userFilePath, atomically: true)
         } else{
             print("user is already existed!")

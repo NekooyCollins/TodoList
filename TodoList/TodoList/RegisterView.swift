@@ -17,6 +17,7 @@ struct RegisterView: View {
     @State private var pFlag = false
     @State private var isEmailValid = true
     @State private var isLegal = false
+    @State private var showAlert = false
     
     var isCanRegister: Bool {
         username.count >= 4 &&
@@ -78,35 +79,37 @@ struct RegisterView: View {
             }
             .background(Color.orange)
 
-            NavigationLink(
-                destination: LoginView(),
-                isActive: $isLegal
-                ){
-                if (isCanRegister) && (self.isEmailValid) {
-                    Button(action: {
-                        self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
-                        if self.manager.legalregister == true{
-                            isLegal = true
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
-                    }) {
-                        Text("Sign Up")
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+            if (isCanRegister) && (self.isEmailValid) {
+                Button(action: {
+                    self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
+                    if manager.lostConnection {
+                        self.showAlert = true
                     }
-                    .frame(width: 300, height: 45, alignment: .center)
-                    .background(Color.green)
-                    .cornerRadius(20)
+                    if self.manager.legalregister == true{
+                        isLegal = true
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }) {
+                    Text("Sign Up")
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
+                .frame(width: 300, height: 45, alignment: .center)
+                .background(Color.green)
+                .cornerRadius(20)
+                .alert(isPresented: $showAlert) { () -> Alert in
+                    Alert(title: Text("Network is not available :("))
                 }
             }
             Spacer()
         }
+        .navigationBarTitle("")
+//        .navigationBarHidden(true)
         .padding(.top, 80.0)
         .padding(.bottom, 20.0)
         .padding(.horizontal)
         .background(Color(UIColor.systemOrange).edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/))
-        .navigationBarTitle("Register")
-        .navigationBarHidden(true)
+        
     }
 }
 
@@ -125,19 +128,3 @@ extension View {
         }
     }
 }
-
-//struct Validation<Value>: ViewModifier {
-//    var value: Value
-//    var validator: (Value) -> Bool
-//
-//    func body(content: Content) -> some View {
-//        Group {
-//            if validator(value) {
-//                content.border(Color.green)
-//            } else {
-//                content
-//            }
-//        }
-//    }
-//}
-

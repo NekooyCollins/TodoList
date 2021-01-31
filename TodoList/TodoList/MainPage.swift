@@ -113,10 +113,8 @@ struct MainPageView: View {
         .onAppear(perform: {
             manager.getUserData()
             manager.getTaskList()
-//            manager.getRankList(userid: String(localUserData.id))
             HandleLocalFile.saveUserToLocalFile(user: localUserData)
             HandleLocalFile.saveTaskToLocalFile(task: localTaskList)
-//            HandleLocalFile.saveRankToLocalFile(ranklist: localRankList)
         })
         .onReceive(timer) { time in
             self.postCount += 1
@@ -157,9 +155,3 @@ struct MainPageView: View {
         }
     }
 }
-
-//struct MainPageView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MainPageView()
-//    }
-//}

@@ -13,7 +13,7 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var showPwd = false
     @State private var isAuth = false
-    @State var showAlert = false
+    @State private var showAlert = false
 
     var isCanLogin: Bool {
         email.count > 0 &&
@@ -77,16 +77,15 @@ struct LoginView: View {
                     destination:MainPageView(),
                     isActive: $isAuth){
                     Button(action: {
-                        if Reachability.isConnectedToNetwork(){
-                            self.manager.postLoginRequest(email:self.email, passwd:self.password)
-                            sleep(1)
-                            if self.manager.authenticated == true {
-                                UserDefaults.standard.set("1", forKey: "isLogin")
-                                SceneDelegate.isLogin = true
-                                isAuth = localAuth
-                            }
-                        } else{
+                        self.manager.postLoginRequest(email:self.email, passwd:self.password)
+                        sleep(1)
+                        if manager.lostConnection{
                             self.showAlert = true
+                        }
+                        if self.manager.authenticated == true {
+                            UserDefaults.standard.set("1", forKey: "isLogin")
+                            SceneDelegate.isLogin = true
+                            isAuth = localAuth
                         }
                     }) {
                         Text("Login")

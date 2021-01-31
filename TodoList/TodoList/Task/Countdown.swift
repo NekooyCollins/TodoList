@@ -99,7 +99,7 @@ struct Countdown: View {
                     if (timeRemaining != 0) {
                         self.showingAlert = true
                     } else{
-                        self.countdownManager.postTaksIsFinished(taskid: String(task.id))
+                        self.countdownManager.postTaksIsFinished(finishedTask: task)
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 }) {

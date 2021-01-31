@@ -37,7 +37,7 @@ struct TaskDataStructure : Hashable, Codable, Identifiable, Equatable {
         return dic
     }
     
-    func == (left: TaskDataStructure, right: TaskDataStructure) -> Bool {
+    static func == (left: TaskDataStructure, right: TaskDataStructure) -> Bool {
         return (left.title == right.title) &&
             (left.description == right.description) &&
             (left.typestr == right.typestr) &&
