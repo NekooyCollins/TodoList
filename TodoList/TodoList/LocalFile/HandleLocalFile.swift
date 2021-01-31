@@ -50,7 +50,7 @@ public class HandleLocalFile {
         
         // no such file, creat one and init it
         if exist1 == false {
-            let dictionary:NSDictionary = ["id":0, "name":"", "email":"", "passwd":""]
+            let dictionary:NSDictionary = ["id": "", "name":"", "email":"", "passwd":""]
             dictionary.write(to: userFilePath, atomically: true)
         } else{
             print("user is already existed!")
@@ -58,7 +58,7 @@ public class HandleLocalFile {
 
         if exist2 == false {
             let dictionary:NSDictionary = ["title" : "",
-                                           "id" : 0,
+                                           "id" : "",
                                            "description" : "",
                                            "duration" : 0,
                                            "remaintime" : 0,
@@ -78,7 +78,7 @@ public class HandleLocalFile {
         }
 
         if exist4 == false {
-            let dictionary:NSDictionary = ["id":0, "name":"", "email":"", "passwd":""]
+            let dictionary:NSDictionary = ["id":"", "name":"", "email":"", "passwd":""]
             dictionary.write(to: friendsFilePath, atomically: true)
         } else{
             print("friends is already existed!")
@@ -170,19 +170,24 @@ public class HandleLocalFile {
         let homePath = HandleLocalFile.getDocumentsDirectory()
         let userFilePath = homePath.appendingPathComponent("userdata.json")
         
-        let userJSONArr = try! JSONEncoder().encode(user)
-        let jsonString = String(data: userJSONArr, encoding: .utf8)!
-        print("saveUserLocal function:" + jsonString)
-
-        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
-        let os = OutputStream(url: userFilePath, append: false)
+        let userDict = user.convertToDictionary()
+        let data = try! JSONSerialization.data(withJSONObject: userDict,
+                                                   options: JSONSerialization.WritingOptions.prettyPrinted)
+        try! data.write(to: userFilePath, options: .atomic)
         
-        os?.open()
-        JSONSerialization.writeJSONObject(userDict,
-                                          to: os!,
-                                          options: JSONSerialization.WritingOptions.prettyPrinted,
-                                          error: NSErrorPointer.none)
-        os?.close()
+//        let userJSONArr = try! JSONEncoder().encode(user)
+//        let jsonString = String(data: userJSONArr, encoding: .utf8)!
+//        print("saveUserLocal function:" + jsonString)
+//
+//        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
+//        let os = OutputStream(url: userFilePath, append: false)
+//
+//        os?.open()
+//        JSONSerialization.writeJSONObject(userDict,
+//                                          to: os!,
+//                                          options: JSONSerialization.WritingOptions.prettyPrinted,
+//                                          error: NSErrorPointer.none)
+//        os?.close()
     }
     
     class func saveTaskToLocalFile(task: [TaskDataStructure]){

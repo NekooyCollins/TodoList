@@ -21,7 +21,7 @@ struct RankingListView: View {
         }
         .navigationBarTitle(Text("Ranking"))
         .onAppear(perform: {
-            rankingManager.getRankList(userid: String(localUserData.id))
+            rankingManager.getRankList(userid: localUserData.id)
             HandleLocalFile.saveRankToLocalFile(ranklist: localRankList)
         })
         .onReceive(saveLocallyTimer) { time in
