@@ -39,10 +39,3 @@ struct TaskList: View {
         .navigationBarTitle("Tasks")
     }
 }
-
-//struct TaskList_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TaskList(user: userDataSet[0])
-//            .environmentObject(TaskData())
-//    }
-//}

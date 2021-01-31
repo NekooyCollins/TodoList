@@ -28,7 +28,6 @@ struct ShowFriends: View {
                     } else{
                         lostConnection = true
                     }
-                    
                 }) {
                     Image(systemName: "person.crop.circle.fill.badge.plus")
                         .resizable()

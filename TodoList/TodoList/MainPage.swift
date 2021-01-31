@@ -155,9 +155,3 @@ struct MainPageView: View {
         }
     }
 }
-
-//struct MainPageView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MainPageView()
-//    }
-//}

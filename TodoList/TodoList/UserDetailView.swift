@@ -15,10 +15,6 @@ struct UserDetailView: View {
 
     var body: some View {
         VStack {
-//            Text("Account")
-//                .font(.largeTitle)
-//                .fontWeight(.bold)
-//                .foregroundColor(Color.black)
 
             // image
             ZStack {
@@ -99,8 +95,6 @@ struct UserDetailView: View {
 //            .frame(width: 300, height: 45, alignment: .center)
 //            .background(Color.red)
 //            .cornerRadius(20)
-                
-           
         }
         .navigationBarTitle("Account")
         .padding(.horizontal)

@@ -19,4 +19,7 @@ var localRankList: [RankStructure] = []
 // var for test
 var localTestTask = TaskDataStructure()
 
+// server ip address
+let url = "http://192.168.31.36:8080"
+
 
