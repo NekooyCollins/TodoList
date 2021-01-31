@@ -10,20 +10,20 @@ import SwiftUI
 import CoreLocation
 
 struct UserDataStructure : Hashable, Codable, Identifiable {
-    var id : Int
+    var id : UUID
     var name: String
     var email: String
     var passwd: String
     
     init(){
-        id      = 0;
+        id      = UUID()
         name    = ""
         email   = ""
         passwd  = ""
     }
     
     func convertToDictionary() -> [String : Any] {
-        let dic: [String: Any] = ["id":self.id, "name":self.name, "email":self.email, "passwd":self.passwd]
+        let dic: [String: Any] = ["id":self.id.uuidString, "name":self.name, "email":self.email, "passwd":self.passwd]
         return dic
     }
 }

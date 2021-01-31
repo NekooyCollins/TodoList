@@ -35,7 +35,7 @@ import CoreLocation
 //    }
 //}
 
-func getMemName(memID: Int, userList: [UserDataStructure]) -> String {
+func getMemName(memID: UUID, userList: [UserDataStructure]) -> String {
     var fullName: String = ""
 
     for user in userList{
@@ -91,7 +91,7 @@ func isValidEmail(_ email: String) -> Bool {
     return emailPred.evaluate(with: email)
 }
 
-func getUserEmail(memID: Int, userList: [UserDataStructure]) -> String {
+func getUserEmail(memID: UUID, userList: [UserDataStructure]) -> String {
     var email: String = ""
     for user in userList{
         if user.id == memID {
@@ -101,7 +101,7 @@ func getUserEmail(memID: Int, userList: [UserDataStructure]) -> String {
     return email
 }
 
-func getUserFullName(memID: Int, userList: [UserDataStructure]) -> String {
+func getUserFullName(memID: UUID, userList: [UserDataStructure]) -> String {
     var fullName: String = ""
     
     for user in userList{

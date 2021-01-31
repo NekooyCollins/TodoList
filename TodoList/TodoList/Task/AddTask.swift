@@ -11,7 +11,7 @@ import UIKit
 
 struct AddTask: View {
 
-    @FetchRequest(entity: Task.entity(), sortDescriptors: []) var tasks: FetchedResults<Task>
+//    @FetchRequest(entity: Task.entity(), sortDescriptors: []) var tasks: FetchedResults<Task>
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject private var manager = RequestHandle()
     @State private var newTask = AddTaskStructure()

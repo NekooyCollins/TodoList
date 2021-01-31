@@ -12,7 +12,7 @@ struct AllMemberList: View {
     @ObservedObject private var manager = RequestHandle()
     
     init(inputTask: TaskDataStructure){
-        self.manager.getTaskMember(taskid: String(inputTask.id))
+        self.manager.getTaskMember(taskid: inputTask.id)
     }
     
     var body: some View {

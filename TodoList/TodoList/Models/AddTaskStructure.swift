@@ -10,8 +10,8 @@ import SwiftUI
 import CoreLocation
 
 struct AddTaskStructure : Hashable, Codable, Identifiable {
-    var id : Int
-    var creatorid : Int
+    var id : UUID
+    var creatorid : UUID
     var title: String
     var description: String
     var duration: Int
@@ -24,7 +24,7 @@ struct AddTaskStructure : Hashable, Codable, Identifiable {
     init(){
         title = ""
         creatorid = localUserData.id
-        id = 0
+        id = UUID()
         description = ""
         duration = 60
         remaintime = 60

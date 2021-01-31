@@ -10,6 +10,5 @@ import UIKit
 
 func checkBatteryLevel() -> Float {
     let batteryLevel = UIDevice.current.batteryLevel
-    print("Battery level is: ", batteryLevel)
     return batteryLevel
 }
