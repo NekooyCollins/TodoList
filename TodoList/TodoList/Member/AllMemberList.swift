@@ -8,13 +8,36 @@
 import SwiftUI
 
 struct AllMemberList: View {
+//    var inputTask: TaskDataStructure
+    @ObservedObject private var manager = RequestHandle()
+    
+    init(inputTask: TaskDataStructure){
+        self.manager.getTaskMember(taskid: inputTask.id)
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack (alignment: .leading){
+            HStack{
+                Spacer()
+//                NavigationLink(destination: AddMember()) {
+//                   Text("Add Member  ")
+//                    .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+//                }
+//                .buttonStyle(PlainButtonStyle())
+            }
+
+            List{
+                ForEach(manager.taskMemberList, id: \.self) { mem in
+                    MemberRow(user: mem)
+                }
+            }
+        }
+        .navigationBarTitle("Task Members")
     }
 }
 
 struct AllMemberList_Previews: PreviewProvider {
     static var previews: some View {
-        AllMemberList()
+        AllMemberList(inputTask: localTestTask)
     }
 }

@@ -8,16 +8,19 @@
 import SwiftUI
 
 struct MemberShortList: View {
-    @EnvironmentObject private var userList: UserData
-    var task: TaskDataStructure
+    @ObservedObject private var manager = RequestHandle()
+//    var task: TaskDataStructure
+    init(inputTask: TaskDataStructure){
+        self.manager.getTaskMember(taskid: inputTask.id)
+    }
     
     var body: some View {
-        let max: Int = task.members.count >= 5 ? 5 : task.members.count
-        
+        let max: Int = manager.taskMemberList.count >= 5 ? 5 : manager.taskMemberList.count
+
         VStack{
             HStack{
                 ForEach(0..<max, id: \.self) { idx in
-                    MemberIcon(memID: task.members[idx])
+                    MemberIcon(mem: manager.taskMemberList[idx])
                 }
             }
         }
@@ -26,8 +29,6 @@ struct MemberShortList: View {
 
 struct MemberShortList_Previews: PreviewProvider {
     static var previews: some View {
-        let task = TaskData().dataset[0]
-        MemberShortList(task: task)
-            .environmentObject(UserData())
+        MemberShortList(inputTask: localTestTask)
     }
 }

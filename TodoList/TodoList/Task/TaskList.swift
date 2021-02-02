@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TaskList: View {
-    @EnvironmentObject private var AllTaskData: TaskData
+    @ObservedObject private var manager = RequestHandle()
+    @State var bakToMain: Bool = false
     
     var body: some View {
         VStack (alignment: .leading){
@@ -22,20 +23,19 @@ struct TaskList: View {
             }
             
             List{
-                ForEach(AllTaskData.dataset, id: \.self) { task in
-                    NavigationLink(destination: TaskDetail(task: task)) {
-                            TaskRow(task: task)
+                ForEach(localTaskList, id: \.self) { task in
+                    if task.isfinish == false{
+                        NavigationLink(destination: TaskDetail(task: task)) {
+                                TaskRow(task: task)
+                        }
                     }
                 }
             }
+            .onAppear(perform: {
+                manager.getUserData()
+                manager.getTaskList()
+            })
         }
         .navigationBarTitle("Tasks")
-    }
-}
-
-struct TaskList_Previews: PreviewProvider {
-    static var previews: some View {
-        TaskList()
-            .environmentObject(TaskData())
     }
 }

@@ -20,11 +20,11 @@ struct TaskRow: View {
     }
 }
 
-
-struct TaskRow_Previews: PreviewProvider {
-    static var previews: some View {
-        Group{
-            TaskRow(task: taskDataSet[0])
-        }
-    }
-}
+//
+//struct TaskRow_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group{
+//            TaskRow(task: taskDataSet[0])
+//        }
+//    }
+//}

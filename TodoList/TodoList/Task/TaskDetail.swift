@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct TaskDetail: View {
+    @ObservedObject var manager = RequestHandle()
+    @State private var taskCanStart = false
+    @State private var showingAlert = false
     var task: TaskDataStructure
     
     var body: some View {
@@ -18,22 +21,16 @@ struct TaskDetail: View {
                             Text("Members").font(.title).bold()
                             Spacer()
                         }
-                        MemberShortList(task: task)
-                            .environmentObject(UserData())
+                        MemberShortList(inputTask: task)
                     }
                     .frame(height: 130)
                     HStack{
-                        NavigationLink(destination: AllMemberList()) {
-                           Text("All members")
+                        NavigationLink(destination: AllMemberList(inputTask: task)) {
+                           Text("See all members")
                             .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                         }
                         .buttonStyle(PlainButtonStyle())
                         Spacer()
-                        NavigationLink(destination: AddMember()) {
-                           Text("Add member")
-                            .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-                        }
-                        .buttonStyle(PlainButtonStyle())
                     }
                     
                     HStack{
@@ -44,7 +41,7 @@ struct TaskDetail: View {
                         VStack{
                             HStack{
                                 Spacer()
-                                Text(stringFromTimeInterval(time: task.duration))
+                                Text(String(task.duration))
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
@@ -65,7 +62,7 @@ struct TaskDetail: View {
                         VStack{
                             HStack{
                                 Spacer()
-                                Text(task.type)
+                                Text(task.typestr)
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
@@ -82,7 +79,7 @@ struct TaskDetail: View {
                         Text("Description").font(.title3)
                         VStack{
                             HStack{
-                                Text(task.desc)
+                                Text(task.description)
                                     .lineLimit(0)
                                     .padding(.top, 1.0)
                                     .foregroundColor(.gray)
@@ -99,7 +96,7 @@ struct TaskDetail: View {
                 .padding()
                 
                 VStack{
-                    NavigationLink(destination: ProcessTask()) {
+                    NavigationLink(destination: Countdown(task: task)) {
                        Text("Start")
                         .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                     }
@@ -120,15 +117,14 @@ struct TaskDetail: View {
 
 struct TaskDetail_Previews: PreviewProvider {
     static var previews: some View {
-        TaskDetail(task: taskDataSet[0])
-            .environmentObject(TaskData())
+        TaskDetail(task: localTestTask)
     }
 }
 
-func stringFromTimeInterval(time: TimeInterval) -> String {
-    let hours = Int(time) / 3600
-    let minutes = Int(time) / 60 % 60
-    let seconds = Int(time) % 60
-    return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
-}
+//func stringFromTimeInterval(time: TimeInterval) -> String {
+//    let hours = Int(time) / 3600
+//    let minutes = Int(time) / 60 % 60
+//    let seconds = Int(time) % 60
+//    return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+//}
 
