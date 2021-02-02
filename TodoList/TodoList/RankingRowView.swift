@@ -29,8 +29,8 @@ struct RankingRowView: View {
                 .frame(width: 50.0)
             
         }
-        .frame(height: 80.0)
-        .background(SwiftUI.Color.yellow)
+        .frame(height: 70.0)
+        .background(Color(red: 255 / 255, green: 177 / 255, blue: 27 / 255))
         .cornerRadius(10)
     }
 }

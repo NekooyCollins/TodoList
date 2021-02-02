@@ -174,20 +174,6 @@ public class HandleLocalFile {
         let data = try! JSONSerialization.data(withJSONObject: userDict,
                                                    options: JSONSerialization.WritingOptions.prettyPrinted)
         try! data.write(to: userFilePath, options: .atomic)
-        
-//        let userJSONArr = try! JSONEncoder().encode(user)
-//        let jsonString = String(data: userJSONArr, encoding: .utf8)!
-//        print("saveUserLocal function:" + jsonString)
-//
-//        let userDict = try? JSONSerialization.jsonObject(with: userJSONArr) as? [String: Any]
-//        let os = OutputStream(url: userFilePath, append: false)
-//
-//        os?.open()
-//        JSONSerialization.writeJSONObject(userDict,
-//                                          to: os!,
-//                                          options: JSONSerialization.WritingOptions.prettyPrinted,
-//                                          error: NSErrorPointer.none)
-//        os?.close()
     }
     
     class func saveTaskToLocalFile(task: [TaskDataStructure]){

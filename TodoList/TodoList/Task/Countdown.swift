@@ -17,24 +17,24 @@ struct Countdown: View {
     @State private var startFlag = false
     @State private var timeRemaining = 0
     @State private var textContent = ""
-    var task: TaskDataStructure
+    @State private var waitingJoin = 30
+    @State private var postInterval = 3
+    @State private var postCount = 0
+    @State private var quitCount = 0
     @State private var showingAlert1 = false // Alert when others in a group task quit.
     @State private var showingAlert2 = false // Alert when battery level is lower than 10%.
-    @State private var waitingJoin = 30
     
     let timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Countdown timer.
     let timer2 = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Wait other members to join a group task.
     let timer3 = Timer.publish(every: 1, on: .main, in: .common).autoconnect() // Check if group task has been quit by ohters.
-    @State private var postInterval = 3
-    @State private var postCount = 0
     
+    var task: TaskDataStructure
     var finishSuccessfully: Bool {
         leave == false &&
         timeRemaining == 0
     }
     
     var body: some View {
-        
             VStack{
                 ZStack{
                     Circle()
@@ -49,15 +49,15 @@ struct Countdown: View {
                 }
                 .frame(height: 400.0)
                 
-                Text(startFlag == false && task.isgrouptask ? "Please wait others to join" : "")
-                    .font(.title)
-                    .fontWeight(.light)
-                    .foregroundColor(Color.orange)
-                
                 Text(finishSuccessfully ? "Well done!" : "Stay focus :)")
                     .font(.title)
                     .fontWeight(.light)
                     .foregroundColor(Color.orange)
+                
+                Text(startFlag == false && task.isgrouptask ? "Please wait others to join" : "")
+                    .font(.title3)
+                    .fontWeight(.light)
+                    .foregroundColor(Color.red)
                 
                 Text("")
                     .alert(isPresented: $showingAlert1){() -> Alert in
@@ -93,7 +93,7 @@ struct Countdown: View {
                     }
                     
                 Spacer()
-                    .frame(height: 100.0)
+                    .frame(height: 50.0)
                     
                 Button(action: {
                     if (timeRemaining != 0) {
@@ -126,7 +126,6 @@ struct Countdown: View {
                     }
                     return Alert(title: Text("Are you sure to leave?"), message: Text("Your task will fail :("), primaryButton: primaryButton, secondaryButton: secondaryButton)
                 }
-
                 Spacer()
                     .frame(height: 150.0)
             }
@@ -149,7 +148,6 @@ struct Countdown: View {
                     manager.postJoinGroupTask(userid: localUserData.id, taskid: task.id)
                 }
             })
-
             .onReceive(timer) { time in
                 if self.startFlag == true{
                     if self.timeRemaining > 0 {
@@ -187,18 +185,9 @@ struct Countdown: View {
                 }
             })
             .onReceive(timer3, perform: { time in
-                self.postCount += 1
+                self.quitCount += 1
                 if task.isgrouptask == true && self.startFlag == true{
-                    // Change check post request frequency based on battery level.
-                    if checkBatteryLevel() < 0.3 && checkBatteryLevel() > 0.1 {
-                       postInterval = 10
-                    }else if checkBatteryLevel() > 0.3{
-                        postInterval = 3
-                    }else{
-                        postInterval = 1000
-                    }
-                    
-                    if postCount % postInterval == 0 {
+                    if quitCount % postInterval == 0 {
                         manager.checkGroupTaskQuit(taskid: task.id)
                         if manager.quitGroupTaskFlag == true{
                             self.timeRemaining = 0

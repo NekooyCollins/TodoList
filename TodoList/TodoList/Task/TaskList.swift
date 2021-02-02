@@ -23,7 +23,7 @@ struct TaskList: View {
             }
             
             List{
-                ForEach(manager.taskList, id: \.self) { task in
+                ForEach(localTaskList, id: \.self) { task in
                     if task.isfinish == false{
                         NavigationLink(destination: TaskDetail(task: task)) {
                                 TaskRow(task: task)

@@ -619,7 +619,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TodoList/Preview Content\"";
-				DEVELOPMENT_TEAM = 74ZT36SM89;
+				DEVELOPMENT_TEAM = S7HQGS8RRC;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TodoList/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -628,7 +628,7 @@
 					"@executable_path/Frameworks",
 				);
 				"OTHER_CFLAGS[arch=*]" = "-DSERVER_IP=${SERVER_IP}";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Zidi.TodoList;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Xizhen.TodoList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -642,7 +642,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TodoList/Preview Content\"";
-				DEVELOPMENT_TEAM = 74ZT36SM89;
+				DEVELOPMENT_TEAM = S7HQGS8RRC;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TodoList/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -650,7 +650,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Zidi.TodoList;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Xizhen.TodoList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

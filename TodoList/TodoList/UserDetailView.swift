@@ -82,11 +82,14 @@ struct UserDetailView: View {
             }
             Spacer()
 
-            // log out button
+//            // log out button
 //            Button(action: {
-//                localUserData.email = ""
+//                localUserData = UserDataStructure()
 //                localTaskList = []
 //                localFriendList = []
+//                localRankList = []
+//                UserDefaults.standard.set("nil", forKey: "isLogin")
+//                
 //            }) {
 //                Text("Log out")
 //                    .fontWeight(.bold)
@@ -98,7 +101,7 @@ struct UserDetailView: View {
         }
         .navigationBarTitle("Account")
         .padding(.horizontal)
-        .padding(.vertical, 50.0)
+        .padding(.vertical, 20.0)
     }
 }
 

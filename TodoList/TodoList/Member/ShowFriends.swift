@@ -18,9 +18,8 @@ struct ShowFriends: View {
     var body: some View {
         VStack (alignment: .leading){
             HStack {
-                Text("My Friends")
-                    .bold()
-                    .font(.title)
+                Spacer()
+                    .frame(width: 300.0)
                 
                 Button(action: {
                     if Reachability.isConnectedToNetwork(){
@@ -48,7 +47,7 @@ struct ShowFriends: View {
             }
             .frame(height: 30.0)
             .padding(.horizontal)
-            
+
             List{
                 ForEach(localFriendList, id: \.self) { friend in
                     HStack{
@@ -60,6 +59,7 @@ struct ShowFriends: View {
                     }
                 }// end of ForEach
             }
+            .navigationBarTitle("My Friends")
             .onAppear(perform: {
                 friendManager.getFriendList(email: localUserData.email)
                 HandleLocalFile.saveFriendsToLocalFile(friends: localFriendList)

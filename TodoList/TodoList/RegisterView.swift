@@ -84,6 +84,7 @@ struct RegisterView: View {
                     self.manager.postRegisterRequest(username: self.username, email: self.email, passwd: self.password)
                     if manager.lostConnection {
                         self.showAlert = true
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                     if self.manager.legalregister == true{
                         isLegal = true
@@ -103,8 +104,8 @@ struct RegisterView: View {
             }
             Spacer()
         }
-        .navigationBarTitle("")
-//        .navigationBarHidden(true)
+        .navigationBarTitle("Register")
+        .navigationBarHidden(true)
         .padding(.top, 80.0)
         .padding(.bottom, 20.0)
         .padding(.horizontal)

@@ -19,33 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Use a UIHostingController as window root view controller
         if let windowScene = scene as? UIWindowScene {
-//            if SceneDelegate.isLogin == true{
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: MainPageView())
             self.window = window
             window.makeKeyAndVisible()
-//            }else{
-//                let window = UIWindow(windowScene: windowScene)
-//                window.rootViewController = UIHostingController(rootView: LoginView())
-//                self.window = window
-//                window.makeKeyAndVisible()
-//            }
 
         }
     }
-
-//    @IBAction func saveLoginTapped(_ sender: UIButton){
-//        SceneDelegate.isLogin = true
-//        let window = UIWindow(windowScene: windowScene)
-//        window.rootViewController = UIHostingController(rootView: MainPageView())
-//        UIApplication.setRootView(LoginView.ins)
-//    }
-//
-//    @IBAction func clearLoginTapped(_ sender: UIButton){
-//        SceneDelegate.isLogin = false
-//        let window = UIWindow(windowScene: windowScene)
-//        window.rootViewController = UIHostingController(rootView: LoginView())
-//    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

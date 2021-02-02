@@ -12,14 +12,15 @@ import CoreData
 struct MainPageView: View {
     @ObservedObject private var manager = RequestHandle()
     @State var bakToMain : Bool = false
-    // Create timer to check for group task update
-    let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-    let updateTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     @State private var showingAlert = false
     @State private var postInterval = 3
     @State private var postCount = 0
     @State private var connFlag = false
+    
+    // Create timer to check for group task update
+    let saveLocallyTimer = Timer.publish(every: 120, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    let updateTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init() {
         UITableView.appearance().backgroundColor = .clear
@@ -47,11 +48,11 @@ struct MainPageView: View {
                 
                 VStack{
                     List{
-                        let max = manager.taskList.count > 4 ? 4 : manager.taskList.count
+                        let max = localTaskList.count > 4 ? 4 : localTaskList.count
                         ForEach(0..<max, id: \.self) { idx in
-                            if manager.taskList[idx].isfinish == false{
-                                NavigationLink(destination: TaskDetail(task: manager.taskList[idx])) {
-                                    TaskRow(task: manager.taskList[idx])
+                            if localTaskList[idx].isfinish == false{
+                                NavigationLink(destination: TaskDetail(task: localTaskList[idx])) {
+                                    TaskRow(task: localTaskList[idx])
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
@@ -62,7 +63,7 @@ struct MainPageView: View {
                         manager.getTaskList()
                     })
                     .padding(.all, -40.0)
-                    .navigationBarTitle("Tasks")
+                    .navigationBarTitle("Main Page")
                     .listRowInsets(EdgeInsets())
                     .navigationBarHidden(true)
                     .frame(height: 180)
@@ -100,14 +101,14 @@ struct MainPageView: View {
                     }
                 }
                 Spacer()
+                
             }
             .navigationBarTitle("Main page")
             .navigationBarHidden(true)
             .padding(.horizontal)
             .padding(.top)
         }
-        .frame(width: .infinity, height: .infinity, alignment: .topLeading)
-        .navigationBarTitle(Text("Main page"))
+        .navigationBarTitle("Main page")
         .navigationBarHidden(true)
         .onAppear(perform: {
             manager.getUserData()

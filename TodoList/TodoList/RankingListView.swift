@@ -14,7 +14,7 @@ struct RankingListView: View {
     var body: some View {
         VStack{
             List {
-                ForEach(rankingManager.rankList, id: \.self){ item in
+                ForEach(localRankList, id: \.self){ item in
                     RankingRowView(rankItem: item)
                 }
             }

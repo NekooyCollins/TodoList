@@ -65,6 +65,7 @@ class RequestHandle: ObservableObject{
     func postRegisterRequest(username: String, email: String, passwd: String){
         print("I am register")
         let urlString = url + "/register"
+        print(urlString)
         guard let url = URL(string: urlString) else { return }
         
         let body: [String: String] = ["name": username, "email": email, "passwd": passwd]
@@ -196,26 +197,31 @@ class RequestHandle: ObservableObject{
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            do{
-                let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
-                DispatchQueue.main.async {
-                    self.taskMemberList = resData
+        if Reachability.isConnectedToNetwork(){
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    print(error!)
+                    return
                 }
-            }
-        }.resume()
+                guard let data = data else {
+                    print("Error: Did not receive data")
+                    return
+                }
+                guard let response = response as? HTTPURLResponse, (200 ..< 299) ~= response.statusCode else {
+                    print("Error: HTTP request failed")
+                    return
+                }
+                do{
+                    let resData = try! JSONDecoder().decode([UserDataStructure].self, from: data)
+                    DispatchQueue.main.async {
+                        self.taskMemberList = resData
+                    }
+                }
+            }.resume()
+        } else {
+            self.taskMemberList = []
+            taskMemberList.append(localUserData)
+        }
     }
     
     // Alreaday check connection
@@ -354,7 +360,6 @@ class RequestHandle: ObservableObject{
             newLocalTask.remaintime = addTask.remaintime
             
             localTaskList.append(newLocalTask)
-            print(localTaskList)
             HandleLocalFile.saveTaskToLocalFile(task: localTaskList)
         }   
     }
@@ -482,7 +487,7 @@ class RequestHandle: ObservableObject{
     // Not check connection
     func postJoinGroupTask(userid: UUID, taskid: UUID){
         print("I am join group task")
-        let urlString = url + "/checkstartgrouptask"
+        let urlString = url + "/joingrouptask"
         guard let url = URL(string: urlString) else { return }
         let body: [String: String] = ["userid": userid.uuidString, "taskid": taskid.uuidString]
 

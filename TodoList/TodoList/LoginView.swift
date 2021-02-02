@@ -25,7 +25,7 @@ struct LoginView: View {
             VStack {
                 // app name
                 HStack{
-                    Text("ToDo List")
+                    Text("Focus List")
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(Color.white)
