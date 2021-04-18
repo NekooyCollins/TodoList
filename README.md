@@ -1,3 +1,3 @@
 # TodoList
 
-## TodoList is a mobile app implemented with Flutter.
+## TodoList is a mobile app implemented with Swift UI.
