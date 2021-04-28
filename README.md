@@ -1,6 +1,6 @@
-# TodoList
+# FocusList
 
-## TodoList is a mobile app implemented with Swift UI.
+## FocusList is a mobile app implemented with Swift UI.
 
 ## APP IDEA
 
